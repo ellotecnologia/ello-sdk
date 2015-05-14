@@ -4,7 +4,7 @@ import ello
 import config
 
 WIKI_URL = 'http://wiki.ellotecnologia.net.br'
-SITE_URL = 'http://www.ellotecnologia.net.br '
+SITE_URL = 'http://www.ellotecnologia.net.br'
 
 def atualiza_pagina_downloads(wiki, versao):
     print 'Atualizando links de download do wiki... (%s)' % versao

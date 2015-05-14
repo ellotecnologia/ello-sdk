@@ -15,6 +15,7 @@ import ello
 import delphi
 import deployer
 import notificador
+import wiki
 
 def main():
     ello.build()
@@ -33,7 +34,7 @@ if __name__=="__main__":
     elif param=='resources':
         delphi.resource_compile("Ello.rc", "Ello.res")
     elif param=='wiki':
-        atualiza_wiki()
+        wiki.atualiza_wiki()
     else:
         delphi.build_project("Ello.dpr")
 
