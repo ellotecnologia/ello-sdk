@@ -8,9 +8,13 @@ def resource_compile(resource_filename, output_filename):
     params = "brcc32 %s -fo%s" % (resource_filename, output_filename)
     subprocess.call(params.split(), stdout=FNULL)
 
-def build_project(project_filename):
+def build_project(project_filename, debug=True):
     print u"Compilando projeto %s..." % project_filename,
-    params = "dcc32 -$O+ -$W+ -$D- -$L- -$Y- -$C- -q -b".split()
+    if debug:
+        print "Modo DEBUG ativo...",
+        params = "dcc32 -$O- -$W+ -$D+ -$L+ -$Y+ -$C+ -q -b".split()
+    else:
+        params = "dcc32 -$O+ -$W+ -$D- -$L- -$Y- -$C- -q -b".split()
     params.append(project_filename)
 
     dcc32 = subprocess.Popen(params, stdout=FNULL)

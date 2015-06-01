@@ -82,7 +82,7 @@ def gera_arquivo_resource():
 def build():
     remove_dcus()
     gera_arquivo_resource()
-    delphi.build_project("Ello.dpr")
+    delphi.build_project("Ello.dpr", debug=False)
     print "Arquivo gerado em", output_folder()
     
 if __name__=="__main__":
