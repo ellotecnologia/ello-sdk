@@ -31,7 +31,8 @@ if __name__=="__main__":
         main()
     elif param=='project':
         delphi.build_project("Ello.dpr")
-    elif param=='resources':
+    elif (param=='resources') or (param=='res'):
+        ello.gera_arquivo_resource()
         delphi.resource_compile("Ello.rc", "Ello.res")
     elif param=='wiki':
         wiki.atualiza_wiki()
