@@ -2,6 +2,8 @@
 from dokuwikixmlrpc import DokuWikiClient
 import ello
 import config
+import re
+from StringIO import StringIO
 
 WIKI_URL = 'http://wiki.ellotecnologia.net.br'
 SITE_URL = 'http://www.ellotecnologia.net.br'
@@ -34,12 +36,22 @@ def atualiza_pagina_downloads(wiki, versao):
 
 def atualiza_changelog(wiki):
     print 'Atualizando Changelog do wiki...'
-    f = open('CHANGELOG.txt', 'r')
-    new_page = u'''\
-~~NOTOC~~
-====== Registro de Atualizações ======
-%s''' % f.read().decode('latin1')
-    f.close()
+    contents = StringIO()
+    print >>contents, u'~~NOTOC~~'
+    print >>contents, u'====== Registro de Atualizações ======'
+    print >>contents, u'\\\\'
+    with open('CHANGELOG.txt', 'r') as f:
+        for line in f:
+            line = line.decode('latin1')
+            line = re.sub('^-', '  *', line)
+            contents.write(line)
+    print >>contents, u'===== Anos anteriores ====='
+    print >>contents, u'  * [[changelog:2013]]'
+    print >>contents, u'  * [[changelog:2014]]'
+
+    new_page = contents.getvalue()
+    contents.close()
+
     wiki.put_page('wiki:changelog', new_page, summary='', minor='')
 
 def atualiza_wiki():
