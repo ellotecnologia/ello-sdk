@@ -36,6 +36,7 @@ def atualiza_pagina_downloads(wiki, versao):
 
 def atualiza_changelog(wiki):
     print 'Atualizando Changelog do wiki...'
+    ticket_link = "[[http://200.252.200.154/kanboard/?controller=task&action=readonly&task_id=\\1&token=acde7766fafc0147806ae4af9aec7d35f701d4a0d337d9f6c5d0ed277dc0|#\\1]]"
     contents = StringIO()
     print >>contents, u'~~NOTOC~~'
     print >>contents, u'====== Registro de Atualizações ======'
@@ -44,6 +45,7 @@ def atualiza_changelog(wiki):
         for line in f:
             line = line.decode('latin1')
             line = re.sub('^-', '  *', line)
+            line = re.sub('#(\d+)', ticket_link, line)
             contents.write(line)
     print >>contents, u'===== Anos anteriores ====='
     print >>contents, u'  * [[changelog:2013]]'
