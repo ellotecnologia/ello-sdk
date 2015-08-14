@@ -37,7 +37,7 @@ def notifica_suporte_via_whatsapp():
         print 'Notificando %s via WhatsApp...' % celular
         envia_msg_whatsapp(celular, mensagem)
 
-def notifica(skype=True, whatsapp=True):
+def notifica(skype=True, whatsapp=False):
     if skype:
         notifica_suporte_via_skype()
     if whatsapp:
