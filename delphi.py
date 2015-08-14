@@ -14,15 +14,19 @@ def build_project(project_filename, debug=True):
         print "Modo DEBUG ativo...",
         params = "dcc32 -$O- -$W+ -$D+ -$L+ -$Y+ -$C+ -q -b".split()
     else:
-        params = "dcc32 -$O+ -$W+ -$D- -$L- -$Y- -$C- -q -b".split()
+        params = "dcc32 -$O+ -$W+ -$D- -$L- -$Y- -$C- -q -b -DMOSTRARTELADELOGIN -DRELEASEMODE".split()
     params.append(project_filename)
 
-    dcc32 = subprocess.Popen(params, stdout=FNULL)
+    if debug:
+        dcc32 = subprocess.Popen(params)
+    else:
+        dcc32 = subprocess.Popen(params, stdout=FNULL)
+
     exit_code = dcc32.wait()
 
     if exit_code!=0:
-        print
-        print u'-> Erro na compilação do projeto %s' % project_filename
+        raise Exception(u'-> Erro na compilação do projeto %s' % project_filename)
     else:
+        print
         print u"Compilado com sucesso!"
 
