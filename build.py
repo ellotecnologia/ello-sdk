@@ -16,6 +16,7 @@ import delphi
 import deployer
 import notificador
 import wiki
+import shutil
 
 def main():
     ello.build()
@@ -29,6 +30,11 @@ if __name__=="__main__":
 
     if param=='deploy':
         main()
+    elif param=='test':
+        ello.gera_arquivo_resource()
+        delphi.resource_compile("Ello.rc", "Ello.res")
+        delphi.build_project("Ello.dpr", False)
+        shutil.copyfile('C:/Ello/Windows/Ello.exe', '\\\\10.1.1.100\\transferencia\\Wayron\\testar\\Ello-TESTDRIVE.exe')
     elif param=='project':
         delphi.build_project("Ello.dpr")
     elif (param=='resources') or (param=='res'):
@@ -37,5 +43,7 @@ if __name__=="__main__":
     elif param=='wiki':
         wiki.atualiza_wiki()
     else:
-        delphi.build_project("Ello.dpr")
+        ello.gera_arquivo_resource()
+        delphi.resource_compile("Ello.rc", "Ello.res")
+        delphi.build_project("Ello.dpr", False)
 
