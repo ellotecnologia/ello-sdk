@@ -16,12 +16,15 @@ import delphi
 import deployer
 import notificador
 import wiki
+import changelog
 import shutil
+import datetime
+import repositorio
 
 def main():
     ello.build()
     deployer.deploy()
-    #repositorio.atualiza_repositorio()
+    repositorio.cria_tag_versao()
     wiki.atualiza_wiki()
     notificador.notifica()
 
@@ -33,8 +36,10 @@ if __name__=="__main__":
     elif param=='test':
         ello.gera_arquivo_resource()
         delphi.resource_compile("Ello.rc", "Ello.res")
-        delphi.build_project("Ello.dpr", False)
-        shutil.copyfile('C:/Ello/Windows/Ello.exe', '\\\\10.1.1.100\\transferencia\\Wayron\\testar\\Ello-TESTDRIVE.exe')
+        delphi.build_project("Ello.dpr", True)
+        print "Enviando arquivo para a pasta de testes..."
+        hora = datetime.datetime.now().strftime('%H%M%S')
+        shutil.copyfile('C:/Ello/Windows/Ello.exe', '\\\\10.1.1.100\\transferencia\\Wayron\\testar\\Ello-TESTDRIVE-{}.exe'.format(hora))
     elif param=='project':
         delphi.build_project("Ello.dpr")
     elif (param=='resources') or (param=='res'):
@@ -42,6 +47,8 @@ if __name__=="__main__":
         delphi.resource_compile("Ello.rc", "Ello.res")
     elif param=='wiki':
         wiki.atualiza_wiki()
+    elif param=='changelog':
+        changelog.update()
     else:
         ello.gera_arquivo_resource()
         delphi.resource_compile("Ello.rc", "Ello.res")
