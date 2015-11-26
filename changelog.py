@@ -1,4 +1,5 @@
 # coding: utf8
+import sys
 import subprocess
 import shutil
 import os
@@ -48,6 +49,19 @@ def update():
 
     generate_temp_changelog(latest_tag, changes)
     merge_temp_with_changelog()
+
+    os.startfile('CHANGELOG.txt')
+
+def commit():
+    print u"Commitando atualização do changelog..."
+    subprocess.call(u'git ci -am "Atualização do changelog"'.encode('latin1'))
+
+def push():
+    print u"Fazendo push do changelog..."
+    exit_code = subprocess.call('git push')
+    if exit_code>0:
+        print 'Falha ao fazer o push do changelog...'
+        sys.exit(1)
 
 
 if __name__=='__main__':

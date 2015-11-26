@@ -25,24 +25,23 @@ def notifica_suporte_via_skype():
 
 def envia_msg_whatsapp(numero_celular, mensagem):
     import requests
-    numero_celular = "55" + numero_celular
+    #numero_celular = "55" + numero_celular
     payload = {'fone': numero_celular, 'msg': mensagem}
     r = requests.get(config.whatsapp_url, params=payload)
 
 def notifica_suporte_via_whatsapp():
     versao = '.'.join(ello.versao_no_changelog())
-    mensagem = "Nova revisao %s disponivel para download (Ello Tecnologia)." % versao
-    fones = config.whatsapp_numbers
-    for celular in fones:
-        print 'Notificando %s via WhatsApp...' % celular
-        envia_msg_whatsapp(celular, mensagem)
+    mensagem = "Nova revisao %s disponivel para download - Ello Tecnologia." % versao
+    celular = "556692836044-1446577135" # Grupo Ello
+    print 'Notificando %s via WhatsApp...' % celular
+    envia_msg_whatsapp(celular, mensagem)
 
-def notifica(skype=True, whatsapp=False):
+def notifica(skype=True, whatsapp=True):
     if skype:
         notifica_suporte_via_skype()
     if whatsapp:
         notifica_suporte_via_whatsapp()
 
 if __name__=="__main__":
-    notifica()
+    notifica(False, True)
 

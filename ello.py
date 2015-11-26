@@ -86,5 +86,6 @@ def build():
     print "Arquivo gerado em", output_folder()
     
 if __name__=="__main__":
-    build()
+    # build()
+    print u"Gerando arquivo resources da versão %s"
 
