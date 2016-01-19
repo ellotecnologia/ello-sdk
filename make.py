@@ -1,5 +1,4 @@
 #coding: utf8
-
 import os
 import sys
 import ello
@@ -20,16 +19,13 @@ def build_and_deploy():
           * Atualização do wiki (links de download e changelog)
           * Notificar suporte
     """
-    #changelog.commit()
-    #changelog.push()
-
     ello.build()
-    deployer.deploy()
-
     repositorio.cria_tag_versao()
-
+    deployer.deploy()
     wiki.atualiza_wiki()
-    notificador.notifica()
+
+    if len(sys.argv)==2:
+        notificador.notifica()
 
 def gera_resources():
     ello.gera_arquivo_resource()
@@ -72,7 +68,10 @@ def build_tests():
 
 
 if __name__=="__main__":
-    param = sys.argv[-1]
+    if len(sys.argv)>1:
+        param = sys.argv[1]
+    else:
+        param = ''
 
     if param=='deploy':
         build_and_deploy()
@@ -84,6 +83,7 @@ if __name__=="__main__":
         wiki.atualiza_wiki()
     elif param=='changelog':
         changelog.update()
+        ello.gera_arquivo_resource()
     elif param=='notify':
         notificador.notifica()
     elif (param=='test') or (param=='tests'):

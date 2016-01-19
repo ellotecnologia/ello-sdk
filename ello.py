@@ -45,7 +45,7 @@ BEGIN
 END
 """
 
-@memoize
+#@memoize
 def versao_no_changelog():
     with open('CHANGELOG.txt', 'r') as f:
         versao = f.readline()
