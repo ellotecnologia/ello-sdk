@@ -36,7 +36,7 @@ def atualiza_pagina_downloads(wiki, versao):
 
 def atualiza_changelog(wiki):
     print 'Atualizando Changelog do wiki...'
-    ticket_link = "[[http://200.252.200.154/kanboard/?controller=task&action=readonly&task_id=\\1&token=acde7766fafc0147806ae4af9aec7d35f701d4a0d337d9f6c5d0ed277dc0|#\\1]]"
+    ticket_link = "[[http://kb.ellotecnologia.net.br/?controller=task&action=readonly&task_id=\\1&token=acde7766fafc0147806ae4af9aec7d35f701d4a0d337d9f6c5d0ed277dc0|#\\1]]"
     contents = StringIO()
     print >>contents, u'~~NOTOC~~'
     print >>contents, u'====== Registro de Atualizações ======'
