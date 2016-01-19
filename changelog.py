@@ -50,7 +50,8 @@ def update():
     generate_temp_changelog(latest_tag, changes)
     merge_temp_with_changelog()
 
-    os.startfile('CHANGELOG.txt')
+    notepad = subprocess.Popen(['notepad', 'CHANGELOG.txt'])
+    notepad.wait()
 
 def commit():
     print u"Commitando atualização do changelog..."
