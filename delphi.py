@@ -22,15 +22,17 @@ def build_project(project_filename, debug=True):
     params.append(project_filename)
 
     if debug:
-        dcc32 = subprocess.Popen(params)
+        dcc32 = subprocess.Popen(params, stdout=subprocess.PIPE)
+        grep = subprocess.Popen(['grep', '-i', '-v', 'componentes'], stdin=dcc32.stdout)
+        exit_code = dcc32.wait()
+        grep.wait()
     else:
         dcc32 = subprocess.Popen(params, stdout=FNULL)
-
-    exit_code = dcc32.wait()
+        exit_code = dcc32.wait()
 
     if exit_code!=0:
         raise Exception(u'-> Erro na compilação do projeto %s' % project_filename)
-    else:
-        print
-        print u"Compilado com sucesso!"
+    #else:
+    #    print
+    #    print u"Compilado com sucesso!"
 
