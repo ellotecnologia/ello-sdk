@@ -6,6 +6,7 @@
 import Skype4Py as skype
 import config
 import ello
+import telegram
 
 CHANGELOG_URL = "http://wiki.ellotecnologia.net.br/wiki:changelog"
 
@@ -17,17 +18,14 @@ def notifica_suporte_via_skype():
                 u"podem ser vistos no log de atualizações -> {}"
                ).format(versao, CHANGELOG_URL)
 
-    client = skype.Skype()
-    client.Attach()
-    blob = config.skype_group_blob
-    chat = client.CreateChatUsingBlob(blob)
-    chat.SendMessage(mensagem)
-
-def envia_msg_whatsapp(numero_celular, mensagem):
-    import requests
-    #numero_celular = "55" + numero_celular
-    payload = {'fone': numero_celular, 'msg': mensagem}
-    r = requests.get(config.whatsapp_url, params=payload)
+    try:
+        client = skype.Skype()
+        client.Attach()
+        blob = config.skype_group_blob
+        chat = client.CreateChatUsingBlob(blob)
+        chat.SendMessage(mensagem)
+    except skype.errors.SkypeAPIError:
+        print "Falha ao notificar via skype..."
 
 def notifica_suporte_via_whatsapp():
     versao = '.'.join(ello.versao_no_changelog())
@@ -36,12 +34,19 @@ def notifica_suporte_via_whatsapp():
     print 'Notificando %s via WhatsApp...' % celular
     envia_msg_whatsapp(celular, mensagem)
 
+def envia_msg_whatsapp(numero_celular, mensagem):
+    import requests
+    #numero_celular = "55" + numero_celular
+    payload = {'fone': numero_celular, 'msg': mensagem}
+    r = requests.get(config.whatsapp_url, params=payload)
+
 def notifica(skype=True, whatsapp=True):
-    if skype:
-        notifica_suporte_via_skype()
-    if whatsapp:
-        notifica_suporte_via_whatsapp()
+    #if skype:
+    #    notifica_suporte_via_skype()
+    #if whatsapp:
+    #    notifica_suporte_via_whatsapp()
+    telegram.notifica()
 
 if __name__=="__main__":
-    notifica(False, True)
+    notifica(True, True)
 

@@ -1,73 +1,65 @@
 #coding: utf8
 import os
 import subprocess
-import ello
-from utils import temp_chdir
 import config
+from utils import temp_chdir
+
+FNULL = open(os.devnull, 'wb')
 
 class DeployError(Exception):
     pass
 
-FNULL = open(os.devnull, 'wb')
+def deploy(nome_arquivo, pasta_destino=None, empacotar=True):
+    """ Envia o arquivo para o servidor
+    """
+    caminho_arquivo = os.path.dirname(nome_arquivo) 
+    with temp_chdir(caminho_arquivo):
+        if empacotar:
+            nome_arquivo = empacota(nome_arquivo, caminho_arquivo)
+            nome_arquivo = gera_sfx(nome_arquivo)
+        envia_por_scp(nome_arquivo, pasta_destino)
 
-release_path = ello.output_folder()
-versao = '.'.join(ello.versao_no_changelog())
-executable_name = "{0}\\Ello-{1}".format(release_path, versao)
-
-user_folder = os.path.expanduser("~")
-
-def empacota():
-    arquivo_compactado = "Ello-{0}.7z".format(versao)
-    arquivo_executavel = "Ello.exe"
-
-    print "Gerando arquivo {0}\\{1}".format(release_path, arquivo_compactado)
-
-    params = "7za a -bd {0} {1}".format(arquivo_compactado, arquivo_executavel).split()
+def empacota(nome_arquivo, caminho_arquivo):
+    nome_arquivo_compactado = "{0}.7z".format(extrai_nome_arquivo(nome_arquivo))
+    print "Gerando arquivo {0}".format(nome_arquivo_compactado)
+    params = "7za a -bd {0} {1}".format(nome_arquivo_compactado, nome_arquivo).split()
     exit_code = subprocess.call(params, stdout=FNULL)
     if exit_code>0:
-        raise DeployError(u'Não foi possível compactar o executável')
+        raise DeployError(u'Não foi possível compactar arquivo {0}\\{1}'.format(caminho_arquivo, nome_arquivo))
+    return nome_arquivo_compactado
 
-def gera_sfx():
-    path = os.path.dirname(__file__)
-    sfx_path = path + "\\sfx\\7z.sfx"
-
-    arquivo_compactado = "Ello-{0}.7z".format(versao)
-    arquivo_sfx = "Ello-{0}-compactado.exe".format(versao)
-
+def gera_sfx(nome_arquivo):
     print "Gerando arquivo SFX...",
-
-    params = "copy /b {0} + {1} {2}".format(sfx_path, arquivo_compactado, arquivo_sfx)
+    path = os.path.dirname(os.path.abspath(__file__))
+    sfx_path = path + "\\sfx\\7z.sfx"
+    nome_arquivo_compactado = "{0}-compactado.exe".format(extrai_nome_arquivo(nome_arquivo))
+    params = "copy /b {0} + {1} {2}".format(sfx_path, nome_arquivo, nome_arquivo_compactado)
     exit_code = subprocess.call(params, stdout=FNULL, shell=True)
     if exit_code>0:
-        raise DeployError(u'Não foi possível gerar o descompactador sfx')
-
+        raise DeployError(u'Não foi possível gerar arquivo sfx')
     print "OK!"
+    return nome_arquivo_compactado
 
-def envia_para_servidor():
-    print u"Enviando executável para o servidor...",
-    arquivo_sfx = "Ello-{0}-compactado.exe".format(versao)
+def envia_por_scp(nome_arquivo, pasta_destino=None):
+    print u"Enviando '{0}' para o servidor...".format(nome_arquivo),
+    ssh_key_file = os.path.expanduser("~") + "\\" + config.ssh_key
+    pasta_destino = pasta_destino or config.ftp_path
+    nome_arquivo = os.path.basename(nome_arquivo)
     params = "scp -i {} -P {} {} {}@{}:{}".format(
-        user_folder+"\\"+config.ssh_key, 
+        ssh_key_file,
         config.ssh_port, 
-        arquivo_sfx,
+        nome_arquivo,
         config.ssh_user, 
         config.hostname, 
-        config.ftp_path)
-
+        pasta_destino)
     exit_code = subprocess.call(params.split(), stdout=FNULL, shell=True)
     if exit_code>0:
-        raise DeployError(u'Não foi possível enviar o arquivo para o servidor')
-    
-    print "Enviado com sucesso!"
+        raise DeployError(u'Não foi possível enviar {0} para o servidor'.format(nome_arquivo))
+    print "OK"
 
-def deploy():
-    """ Empacota e envia o executável para o servidor
-    """
-    with temp_chdir(release_path):
-        empacota()
-        gera_sfx()
-        envia_para_servidor()
+def extrai_nome_arquivo(nome_arquivo):
+    return os.path.splitext(nome_arquivo)[0]
 
 if __name__=="__main__":
-    deploy()
+    deploy('\\ello\\testando\\teste.txt')
 

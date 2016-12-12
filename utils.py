@@ -21,6 +21,7 @@ def temp_chdir(path):
     >>> with temp_chdir(gitrepo_path):
     ...   subprocess.call('git status')
     """
+    path = path or '.'
     starting_directory = os.getcwd()
     try:
         os.chdir(path)

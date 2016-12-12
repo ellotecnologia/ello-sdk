@@ -39,7 +39,7 @@ def merge_temp_with_changelog():
                 for line in infile:
                     outfile.write(line)
     shutil.copyfile('result.txt', 'CHANGELOG.txt')
-    os.remove('temp.txt')
+    #os.remove('temp.txt')
     os.remove('result.txt')
 
 def update():
@@ -48,10 +48,11 @@ def update():
     changes = get_change_list(latest_tag)
 
     generate_temp_changelog(latest_tag, changes)
-    merge_temp_with_changelog()
 
-    notepad = subprocess.Popen(['notepad', 'CHANGELOG.txt'])
+    notepad = subprocess.Popen(['notepad', 'temp.txt'])
     notepad.wait()
+
+    merge_temp_with_changelog()
 
 def commit():
     print u"Commitando atualização do changelog..."

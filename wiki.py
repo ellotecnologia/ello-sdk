@@ -50,6 +50,7 @@ def atualiza_changelog(wiki):
     print >>contents, u'===== Anos anteriores ====='
     print >>contents, u'  * [[changelog:2013]]'
     print >>contents, u'  * [[changelog:2014]]'
+    print >>contents, u'  * [[changelog:2015]]'
 
     new_page = contents.getvalue()
     contents.close()
@@ -58,7 +59,11 @@ def atualiza_changelog(wiki):
 
 def atualiza_wiki():
     print 'Atualizando wiki...'
-    wiki = DokuWikiClient(WIKI_URL, config.wiki_user, config.wiki_password)
+    try:
+        wiki = DokuWikiClient(WIKI_URL, config.wiki_user, config.wiki_password)
+    except:
+        print 'Erro ao atualizar o wiki!'
+        return
     versao = '.'.join(ello.versao_no_changelog())
     atualiza_pagina_downloads(wiki, versao)
     atualiza_changelog(wiki)
