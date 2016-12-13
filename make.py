@@ -24,14 +24,14 @@ if __name__=="__main__":
         ello.build_and_deploy_pre_release()
     elif param=='changelog':
         ello.atualiza_changelog()
-    elif (param=='test') or (param=='tests'):
-        test_pipeline.build_tests()
     elif param=='clean':
         ello.clean_working_dir()
     elif (param=='resources') or (param=='res'):
         ello.gera_resources()
     elif (param=='installer'):
         instalador.build_and_deploy()
+    elif (param=='test') or (param=='tests'):
+        test_pipeline.build_tests()
     elif param=='wiki':
         wiki.atualiza_wiki()
     elif param=='notify':

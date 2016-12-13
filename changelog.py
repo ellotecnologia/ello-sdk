@@ -10,11 +10,6 @@ def get_latest_tag():
     p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     return p.communicate()[0].strip()
 
-def get_change_list(from_tag):
-    cmd = ['git', 'changelog', '{}..'.format(from_tag)]
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    return p.communicate()[0].splitlines()
-
 def generate_temp_changelog(latest_tag, changes):
     major = ".".join(latest_tag.split('.')[:-1])
     next_release = int(latest_tag.split('.')[-1], 10)+1
@@ -53,6 +48,11 @@ def update():
     notepad.wait()
 
     merge_temp_with_changelog()
+
+def get_change_list(from_tag):
+    cmd = ['git', 'changelog', '--reverse', '{}..'.format(from_tag)]
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    return p.communicate()[0].splitlines()
 
 def commit():
     print u"Commitando atualização do changelog..."

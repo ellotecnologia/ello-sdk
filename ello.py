@@ -2,66 +2,21 @@
 import os
 import sys
 import re
+import glob
+import shutil
 import datetime
+
 import delphi
 import deployer
-import glob
-import instalador
 import repositorio
-import shutil
+import instalador
+import notificador
 import wiki
 import signtool
 import changelog
+
 from ConfigParser import ConfigParser
-
-RC_FILE = u"""\
-MAINICON ICON "Ello.ico"
-
-1 VERSIONINFO
-FILEVERSION {major},{minor},{build},{release}
-PRODUCTVERSION {major},{minor},{build},{release}
-FILEFLAGSMASK 0x3fL
-#ifdef _DEBUG
- FILEFLAGS 0x9L
-#else
- FILEFLAGS 0x8L
-#endif
-FILEOS 0x4
-FILETYPE 0x1
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "041604E4"
-        BEGIN
-            VALUE "CompanyName", "Ello Tecnologia\\0"
-            VALUE "FileDescription", "Sistema Ello - Automação Comercial\\0"
-            VALUE "FileVersion", "{major}.{minor}.{build}.{release}\\0"
-            VALUE "InternalName", "Ello\\0"
-            VALUE "LegalCopyright", "Ello Tecnologia Ltda\\0"
-            VALUE "LegalTrademarks", "Ello tecnologia\\0"
-            VALUE "OriginalFilename", "Ello.exe\\0"
-            VALUE "ProductName", "Sistema Ello\\0"
-            VALUE "ProductVersion", "{major}.{minor}\\0"
-            VALUE "Comments", "Sistema ERP Ello\\0"
-        END
-    END
-
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x0416 0x04E4
-    END
-END
-{build_info}
-"""
-
-BUILD_INFO = """
-#define OFFICIAL_BUILD_INFO 3556
-
-STRINGTABLE
-BEGIN
-  OFFICIAL_BUILD_INFO, "Official Build"
-END
-"""
+from empacotador import empacota, gera_sfx
 
 def compile_project():
     shutil.copyfile('Ello.cfg.debug', 'Ello.cfg')
@@ -82,17 +37,28 @@ def build_and_deploy():
           * Atualização do wiki (links de download e changelog)
           * Notificar suporte
     """
+    #atualiza_changelog()
+
     nome_executavel = output_folder() + "\\Ello.exe"
 
     build_project()
     signtool.sign(nome_executavel)
-    atualiza_changelog()
-    deployer.deploy(nome_executavel)
+    nome_pacote = empacota_executavel(nome_executavel)
+    deployer.deploy(nome_pacote)
+
     instalador.build_and_deploy()
+
     wiki.atualiza_wiki()
 
     if len(sys.argv)==2:
         notificador.notifica()
+
+def empacota_executavel(nome_executavel):
+    versao = '.'.join(versao_no_changelog())
+    nome_pacote = "{0}\\Ello-{1}".format(output_folder(), versao)
+    nome_pacote = empacota(nome_executavel, nome_pacote)
+    nome_pacote = gera_sfx(nome_pacote)
+    return nome_pacote
 
 def build_and_deploy_pre_release():
     nome_executavel = output_folder() + "\\Ello.exe"
@@ -115,14 +81,15 @@ def deploy_test_version():
 
 def build_project():
     remove_dcus()
-    gera_arquivo_resource()
+    gera_arquivo_resource(*versao_no_changelog())
     delphi.build_project("Ello.dpr", debug=False)
     
 def atualiza_changelog():
     changelog.update()
+    gera_resources()
     versao = '.'.join(versao_no_changelog())
-    repositorio.cria_tag_versao(versao)
     repositorio.commita_changelog(versao)
+    repositorio.cria_tag_versao(versao)
 
 def output_folder():
     config = ConfigParser()
@@ -147,14 +114,21 @@ def clean_working_dir():
     os.system('del /s *.dcu')
     os.system('del /s *.~*')
 
+BUILD_INFO = """
+#define OFFICIAL_BUILD_INFO 3556
+
+STRINGTABLE
+BEGIN
+  OFFICIAL_BUILD_INFO, "Official Build"
+END
+"""
+
 def gera_resources():
-    gera_arquivo_resource()
+    gera_arquivo_resource(*versao_no_changelog())
     delphi.resource_compile("Ello.rc", "Ello.res")
 
-def gera_arquivo_resource():
-    major, minor, build, release = versao_no_changelog()
-    print u"Gerando arquivo resources da versão %s" % ".".join(versao_no_changelog())
-
+def gera_arquivo_resource(major, minor, build, release):
+    print u"Gerando arquivo resources da versão {0}.{1}.{2}.{3}".format(major, minor, build, release)
     grava_arquivo_resource(major, minor, build, release, BUILD_INFO)
     delphi.resource_compile("Ello.rc", "Ello.res")
 
@@ -162,8 +136,10 @@ def gera_arquivo_resource():
     grava_arquivo_resource(major, minor, build, release, '')
 
 def grava_arquivo_resource(major, minor, build, release, build_info):
+    with open(os.path.dirname(__file__)+'\\ello.rc.template', 'r') as template_file:
+        template = template_file.read().decode('utf8')
     f = open('Ello.rc', 'w')
-    file_content = RC_FILE.format(major=major, 
+    file_content = template.format(major=major, 
                                   minor=minor, 
                                   build=build, 
                                   release=release,
