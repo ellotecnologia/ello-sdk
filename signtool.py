@@ -1,9 +1,11 @@
 #coding: utf8
 import os
 import subprocess
+import logging
 
 def sign(nome_executavel):
-    print u"Assinando arquivo {0}".format(nome_executavel),
+    logger = logging.getLogger()
+    logger.info(u"Assinando arquivo {0}".format(nome_executavel))
     FNULL = open(os.devnull, 'wb')
     caminho_certificado = "Certificado\\mycert.pfx" 
     senha_certificado = "ello3556"
@@ -12,6 +14,7 @@ def sign(nome_executavel):
     exit_code = subprocess.call(params, stdout=FNULL)
     if exit_code>0:
         raise Exception(u'Não foi possível assinar o executável')
-    print "OK"
 
-
+if __name__=="__main__":
+    import sys
+    sign(sys.argv[1])

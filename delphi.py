@@ -2,27 +2,39 @@
 import os
 import subprocess
 import shlex
+import logging
 
 FNULL = open(os.devnull, 'wb')
+DELPHI_PATH = os.getenv('DELPHI_BIN')
+COMPILER_PATH = DELPHI_PATH + "\\dcc32.exe"
 
-DELPHI_PATH = "C:/Program Files (x86)/Borland/Delphi7/Bin/"
-COMPILER_PATH = DELPHI_PATH + "dcc32.exe"
+logger = logging.getLogger()
+
+class BuildError(Exception):
+    pass
 
 def resource_compile(resource_filename, output_filename):
-    params = "{0}brcc32 {1} -fo{2}".format(DELPHI_PATH, resource_filename, output_filename)
+    logger.info("Compilando arquivo de resource: {0}".format(resource_filename))
+    params = "{0}\\brcc32 {1} -fo{2}".format(DELPHI_PATH, resource_filename, output_filename)
     subprocess.call(params.split(), stdout=FNULL)
 
 def compile_project(project_name):
+    logger.info(u"Compilando projeto {0}...".format(project_name))
     params = "{0} -W- -H- -q {1}".format(COMPILER_PATH, project_name).split()
-    subprocess.call(params)
+    exit_code = subprocess.call(params, stdout=FNULL)
+    if exit_code>0:
+        logger.info(u"Erro na compilação do projeto!")
+    else:
+        logger.info(u"Projeto compilado com sucesso!")
 
 def build_project(project_filename, debug=True):
-    print u"Compilando projeto {0}...".format(project_filename),
     if debug:
-        print "Modo DEBUG ativo...",
+        msg = "(Modo DEBUG ativo)"
         params = shlex.split("\"{0}\" -$O- -$W+ -$D+ -$L+ -$Y+ -$C+ -q -b".format(COMPILER_PATH))
     else:
-        params = shlex.split("\"{0}\" -$O+ -$W- -$D- -$L- -$Y- -$C- -q -b -DMOSTRARTELADELOGIN -DRELEASEMODE".format(COMPILER_PATH))
+        msg = ''
+        params = shlex.split("\"{0}\" -$O+ -$W- -$D- -$L- -$Y- -$C- -q -b -DRELEASEMODE".format(COMPILER_PATH))
+    logger.info(u"Compilando projeto {0} {1}...".format(project_filename, msg))
     params.append(project_filename)
 
     if debug:
@@ -31,7 +43,13 @@ def build_project(project_filename, debug=True):
 
         warnings = 0
         hints = 0
-        for line in grep.stdout:
+
+        print 
+        for line_number, line in enumerate(grep.stdout):
+            # ignorar as duas primeiras linhas
+            if line_number<3:
+                continue
+
             if 'Warning:' in line:
                 warnings += 1
             if 'Hint:' in line:
@@ -42,16 +60,17 @@ def build_project(project_filename, debug=True):
         grep.wait()
 
         print 'Warnings: {0} Hints: {1}'.format(warnings, hints)
-    else:
-        dcc32 = subprocess.Popen(params, stdout=FNULL)
-        exit_code = dcc32.wait()
         print
+    else:
+        dcc32 = subprocess.Popen(params, stdout=subprocess.PIPE)
+        output = dcc32.communicate()
+        exit_code = dcc32.wait()
+        if exit_code!=0:
+            for line in output:
+                print line
 
     if exit_code!=0:
-        raise Exception(u"-> Erro na compilação do projeto {0}".format(project_filename))
-    #else:
-    #    print
-    #    print u"Compilado com sucesso!"
+        raise BuildError(u"-> Erro na compilação do projeto {0}".format(project_filename))
 
 if __name__=="__main__":
     build_project("Ello.dpr")

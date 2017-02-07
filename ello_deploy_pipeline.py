@@ -5,6 +5,7 @@ import re
 import glob
 import shutil
 import datetime
+import logging
 
 import delphi
 import deployer
@@ -14,20 +15,21 @@ import notificador
 import wiki
 import signtool
 import changelog
+from test_pipeline import run_test_pipeline
 
 from ConfigParser import ConfigParser
 from empacotador import empacota, gera_sfx
 
-def compile_project():
-    shutil.copyfile('Ello.cfg.debug', 'Ello.cfg')
-    gera_resources()
-    delphi.compile_project("Ello.dpr")
+logger = logging.getLogger()
 
-def build_debug():
-    remove_dcus()
-    shutil.copyfile('Ello.cfg.debug', 'Ello.cfg')
-    gera_resources()
-    delphi.build_project("Ello.dpr")
+BUILD_INFO = """
+#define OFFICIAL_BUILD_INFO 3556
+
+STRINGTABLE
+BEGIN
+  OFFICIAL_BUILD_INFO, "Official Build"
+END
+"""
 
 def build_and_deploy():
     """ Faz o build do projeto.
@@ -37,34 +39,48 @@ def build_and_deploy():
           * Atualização do wiki (links de download e changelog)
           * Notificar suporte
     """
-    #atualiza_changelog()
 
+    build_ello_project(debug=False)
+    run_test_pipeline()
+
+    #nome_executavel = output_folder() + "\\Ello.exe"
+    #signtool.sign(nome_executavel)
+    #nome_pacote = empacota_executavel(nome_executavel)
+    #deployer.deploy(nome_pacote)
+    #instalador.build_and_deploy()
+    #wiki.atualiza_wiki()
+
+    #if len(sys.argv)==2:
+    #    notificador.notifica()
+
+def build_and_deploy_pre_release():
     nome_executavel = output_folder() + "\\Ello.exe"
-
-    build_project()
+    remove_dcus()
+    gera_resources()
+    delphi.build_project("Ello.dpr", debug=False)
     signtool.sign(nome_executavel)
-    nome_pacote = empacota_executavel(nome_executavel)
-    deployer.deploy(nome_pacote)
+    deployer.deploy(nome_executavel, pasta_destino='/home/ftp/Downloads/beta')
 
-    instalador.build_and_deploy()
+def build_ello_project(debug=True):
+    remove_dcus()
+    gera_resources()
+    if debug:
+        shutil.copyfile('Ello.cfg.debug', 'Ello.cfg')
+    else:
+        shutil.copyfile('Ello.cfg.release', 'Ello.cfg')
+    delphi.build_project("Ello.dpr", debug)
 
-    wiki.atualiza_wiki()
-
-    if len(sys.argv)==2:
-        notificador.notifica()
+def compile_ello_project():
+    shutil.copyfile('Ello.cfg.debug', 'Ello.cfg')
+    gera_resources()
+    delphi.compile_project("Ello.dpr")
 
 def empacota_executavel(nome_executavel):
-    versao = '.'.join(versao_no_changelog())
+    versao = '.'.join(changelog.ultima_versao())
     nome_pacote = "{0}\\Ello-{1}".format(output_folder(), versao)
     nome_pacote = empacota(nome_executavel, nome_pacote)
     nome_pacote = gera_sfx(nome_pacote)
     return nome_pacote
-
-def build_and_deploy_pre_release():
-    nome_executavel = output_folder() + "\\Ello.exe"
-    build_project()
-    signtool.sign(nome_executavel)
-    deployer.deploy(nome_executavel, pasta_destino='/home/ftp/Downloads/beta')
 
 def build_and_deploy_silently():
     """ Build e deploy silencioso
@@ -75,19 +91,14 @@ def build_and_deploy_silently():
 def deploy_test_version():
     gera_resources()
     delphi.build_project("Ello.dpr", True)
-    print "Enviando arquivo para a pasta de testes..."
+    logger.info(u"Enviando arquivo para a pasta de testes...")
     hora = datetime.datetime.now().strftime('%H%M%S')
     shutil.copyfile('C:/Ello/Windows/Ello.exe', '\\\\10.1.1.100\\transferencia\\Wayron\\testar\\Ello-TESTDRIVE-{}.exe'.format(hora))
 
-def build_project():
-    remove_dcus()
-    gera_arquivo_resource(*versao_no_changelog())
-    delphi.build_project("Ello.dpr", debug=False)
-    
 def atualiza_changelog():
     changelog.update()
     gera_resources()
-    versao = '.'.join(versao_no_changelog())
+    versao = '.'.join(changelog.ultima_versao())
     repositorio.commita_changelog(versao)
     repositorio.cria_tag_versao(versao)
 
@@ -99,39 +110,20 @@ def output_folder():
 def remove_dcus():
     map(os.remove, glob.glob("dcu/*.dcu"))
 
-def versao_no_changelog():
-    with open('CHANGELOG.txt', 'r') as f:
-        versao = f.readline()
-    r = re.search(u'são (\d+\.\d+.\d+(\.\d+)*)', versao)
-    versao = r.group(1).split('.')
-    if len(versao)==3:
-        versao.append('0')
-    return versao
-
 def clean_working_dir():
     os.system('del /s *.ddp')
     os.system('del /s *.dsk')
     os.system('del /s *.dcu')
     os.system('del /s *.~*')
 
-BUILD_INFO = """
-#define OFFICIAL_BUILD_INFO 3556
-
-STRINGTABLE
-BEGIN
-  OFFICIAL_BUILD_INFO, "Official Build"
-END
-"""
-
 def gera_resources():
-    gera_arquivo_resource(*versao_no_changelog())
+    gera_arquivo_resource(*changelog.ultima_versao())
     delphi.resource_compile("Ello.rc", "Ello.res")
+    delphi.resource_compile("extra_resources.rc", "extra_resources.res")
 
 def gera_arquivo_resource(major, minor, build, release):
-    print u"Gerando arquivo resources da versão {0}.{1}.{2}.{3}".format(major, minor, build, release)
+    logger.info(u"Gerando arquivo resources da versão {0}.{1}.{2}.{3}".format(major, minor, build, release))
     grava_arquivo_resource(major, minor, build, release, BUILD_INFO)
-    delphi.resource_compile("Ello.rc", "Ello.res")
-
     # Remove informacoes de build para deixar o arquivo rc sem as informações de build
     grava_arquivo_resource(major, minor, build, release, '')
 
@@ -149,5 +141,5 @@ def grava_arquivo_resource(major, minor, build, release, build_info):
     f.close()
 
 if __name__=="__main__":
-    build()
+    build_project(debug=True)
 

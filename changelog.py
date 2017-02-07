@@ -1,9 +1,13 @@
 # coding: utf8
+import os
 import sys
 import subprocess
 import shutil
-import os
+import re
+import logging
 from datetime import datetime
+
+logger = logging.getLogger()
 
 def get_latest_tag():
     cmd = 'git describe --abbrev=0 --tags' 
@@ -38,7 +42,7 @@ def merge_temp_with_changelog():
     os.remove('result.txt')
 
 def update():
-    print "Atualizando arquivo CHANGELOG.txt"
+    logger.info("Atualizando arquivo CHANGELOG.txt")
     latest_tag = get_latest_tag()
     changes = get_change_list(latest_tag)
 
@@ -55,16 +59,24 @@ def get_change_list(from_tag):
     return p.communicate()[0].splitlines()
 
 def commit():
-    print u"Commitando atualização do changelog..."
+    logger.info(u"Commitando atualização do changelog...")
     subprocess.call(u'git ci -am "Atualização do changelog"'.encode('latin1'))
 
 def push():
-    print u"Fazendo push do changelog..."
+    logger.info(u"Fazendo push do changelog...")
     exit_code = subprocess.call('git push')
     if exit_code>0:
-        print 'Falha ao fazer o push do changelog...'
+        logger.info('Falha ao fazer o push do changelog...')
         sys.exit(1)
 
+def ultima_versao():
+    with open('CHANGELOG.txt', 'r') as f:
+        versao = f.readline()
+    r = re.search(u'são (\d+\.\d+.\d+(\.\d+)*)', versao)
+    versao = r.group(1).split('.')
+    if len(versao)==3:
+        versao.append('0')
+    return versao
 
 if __name__=='__main__':
     update()

@@ -1,7 +1,9 @@
 #coding: utf8
 import os
+import logging
 import telepot
 
+logger = logging.getLogger()
 bot = telepot.Bot('207964732:AAF5jGv-pJObNeeEOTkAnFTIisLppF8Imu0')
 
 #pessoas = [
@@ -20,6 +22,7 @@ def envia_mensagem(mensagem):
     bot.sendMessage('@ellotecnologia', mensagem)
 
 def notifica():
+    logger.info(u"Notificando suporte via Telegram...")
     mensagem = u"Nova revisão disponível para download\n\n"
     # temp.txt é o arquivo criado ao gerar o changelog
     with open('temp.txt') as f:

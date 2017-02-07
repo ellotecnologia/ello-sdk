@@ -32,7 +32,7 @@ def search(report, search_term):
 #print rep.SQLQueryString
 
 def test_query_function():
-    conn = fdb.connect('/ello/dados/1.2.45-Contreras.ello')
+    conn = fdb.connect('/ello/dados/prestativa2.ello')
     def test_query(report_filename, report):
         cursor = conn.cursor()
         try:
