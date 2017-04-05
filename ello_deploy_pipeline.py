@@ -40,18 +40,18 @@ def build_and_deploy():
           * Notificar suporte
     """
 
-    build_ello_project(debug=False)
     run_test_pipeline()
+    build_ello_project(debug=False)
 
-    #nome_executavel = output_folder() + "\\Ello.exe"
-    #signtool.sign(nome_executavel)
-    #nome_pacote = empacota_executavel(nome_executavel)
-    #deployer.deploy(nome_pacote)
-    #instalador.build_and_deploy()
-    #wiki.atualiza_wiki()
+    nome_executavel = output_folder() + "\\Ello.exe"
+    signtool.sign(nome_executavel)
+    nome_pacote = empacota_executavel(nome_executavel)
+    deployer.deploy(nome_pacote)
+    instalador.build_and_deploy()
+    wiki.atualiza_wiki()
 
-    #if len(sys.argv)==2:
-    #    notificador.notifica()
+    if len(sys.argv)==2:
+        notificador.notifica()
 
 def build_and_deploy_pre_release():
     nome_executavel = output_folder() + "\\Ello.exe"
@@ -119,7 +119,7 @@ def clean_working_dir():
 def gera_resources():
     gera_arquivo_resource(*changelog.ultima_versao())
     delphi.resource_compile("Ello.rc", "Ello.res")
-    delphi.resource_compile("extra_resources.rc", "extra_resources.res")
+    #delphi.resource_compile("extra_resources.rc", "extra_resources.res")
 
 def gera_arquivo_resource(major, minor, build, release):
     logger.info(u"Gerando arquivo resources da versão {0}.{1}.{2}.{3}".format(major, minor, build, release))
