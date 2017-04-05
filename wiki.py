@@ -3,7 +3,7 @@ import re
 import logging
 from StringIO import StringIO
 
-from dokuwikixmlrpc import DokuWikiClient
+import dokuwikixmlrpc
 
 import changelog
 import config
@@ -27,9 +27,9 @@ def atualiza_pagina_downloads(wiki, versao):
 
 ===== Versão {versao} (revisão {revisao}) =====
 
-  * [[{site}/versoes/{executavel}|Executável compactado]]
-  * [[{site}/versoes/Update-{versao}.exe|Atualizador]]
-  * [[{site}/versoes/relatorios-{versao}.7z|Relatórios]]
+  * [[{site}/downloads/{executavel}|Executável compactado]]
+  * [[{site}/downloads/Update-{versao}.exe|Atualizador]]
+  * [[{site}/downloads/relatorios-{versao}.zip|Relatórios]]
 '''
     new_page = new_page.format(
         site=SITE_URL,
@@ -66,13 +66,16 @@ def atualiza_changelog(wiki):
 def atualiza_wiki():
     logger.info('Atualizando wiki...')
     try:
-        wiki = DokuWikiClient(WIKI_URL, config.wiki_user, config.wiki_password)
+        wiki = dokuwikixmlrpc.DokuWikiClient(WIKI_URL, config.wiki_user, config.wiki_password)
     except:
         logger.info('Erro ao atualizar o wiki!')
         return
     versao = '.'.join(changelog.ultima_versao())
-    atualiza_pagina_downloads(wiki, versao)
-    atualiza_changelog(wiki)
+    try:
+        atualiza_pagina_downloads(wiki, versao)
+        atualiza_changelog(wiki)
+    except dokuwikixmlrpc.DokuWikiXMLRPCError:
+        logger.info('Erro ao atualizar o wiki!')
 
 if __name__=="__main__":
     atualiza_wiki()
