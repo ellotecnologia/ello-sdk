@@ -4,6 +4,8 @@ import subprocess
 import shlex
 import logging
 
+from termcolor import cprint
+
 FNULL = open(os.devnull, 'wb')
 DELPHI_PATH = os.getenv('DELPHI_BIN')
 COMPILER_PATH = DELPHI_PATH + "\\dcc32.exe"
@@ -46,7 +48,7 @@ def build_project(project_filename, debug=True):
 
         print 
         for line_number, line in enumerate(grep.stdout):
-            # ignorar as duas primeiras linhas
+            # ignorar as duas primeiras linhas do compilador
             if line_number<3:
                 continue
 
@@ -59,7 +61,11 @@ def build_project(project_filename, debug=True):
         exit_code = dcc32.wait()
         grep.wait()
 
-        print 'Warnings: {0} Hints: {1}'.format(warnings, hints)
+        if (warnings>0) or (hints>0):
+            cprint('Warnings: {0} Hints: {1}'.format(warnings, hints), 'red')
+        else:
+            cprint('Warnings: {0} Hints: {1}'.format(warnings, hints), 'green')
+
         print
     else:
         dcc32 = subprocess.Popen(params, stdout=subprocess.PIPE)
