@@ -37,8 +37,7 @@ def main():
     elif (param=='installer'):
         instalador.build_and_deploy()
     elif (param=='test') or (param=='tests'):
-        test_pipeline.build_tests()
-        test_pipeline.run_tests()
+        test_pipeline.run_test_pipeline()
     elif param=='wiki':
         wiki.atualiza_wiki()
     elif param=='notify':
@@ -52,4 +51,6 @@ if __name__=="__main__":
         main()
     except delphi.BuildError:
         logger.info(u'Erro na compilação do projeto!')
+    except test_pipeline.IntegrationTestError, e:
+        logger.info(e.message)
 
