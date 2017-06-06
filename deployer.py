@@ -36,5 +36,5 @@ def envia_por_scp(nome_arquivo, pasta_destino=None):
         raise DeployError(u'Não foi possível enviar {0} para o servidor'.format(nome_arquivo))
 
 if __name__=="__main__":
-    deploy('\\ello\\testando\\teste.txt')
+    deploy('\\tmp\\teste.txt')
 

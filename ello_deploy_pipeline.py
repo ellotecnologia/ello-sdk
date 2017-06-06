@@ -31,7 +31,7 @@ BEGIN
 END
 """
 
-def build_and_deploy():
+def build_and_deploy(args):
     """ Faz o build do projeto.
 
           * Empacotamento do projeto (gerar arquivo compactado)
@@ -39,18 +39,19 @@ def build_and_deploy():
           * Atualização do wiki (links de download e changelog)
           * Notificar suporte
     """
-
     run_test_pipeline()
-    build_ello_project(debug=False)
+    build_ello_project(args)
 
     nome_executavel = output_folder() + "\\Ello.exe"
     signtool.sign(nome_executavel)
     nome_pacote = empacota_executavel(nome_executavel)
     deployer.deploy(nome_pacote)
-    instalador.build_and_deploy()
-    wiki.atualiza_wiki()
 
-    if len(sys.argv)==2:
+    if args.build_installer:
+        instalador.build_and_deploy()
+    if args.update_wiki:
+        wiki.atualiza_wiki()
+    if args.notify_deploy_action:
         notificador.notifica()
 
 def build_and_deploy_pre_release():
@@ -59,16 +60,17 @@ def build_and_deploy_pre_release():
     gera_resources()
     delphi.build_project("Ello.dpr", debug=False)
     signtool.sign(nome_executavel)
-    deployer.deploy(nome_executavel, pasta_destino='/home/ftp/Downloads/beta')
+    nome_pacote = empacota_executavel(nome_executavel)
+    deployer.deploy(nome_pacote, pasta_destino='/home/ftp/Downloads/beta')
 
-def build_ello_project(debug=True):
+def build_ello_project(args):
     remove_dcus()
     gera_resources()
-    if debug:
+    if args.debug:
         shutil.copyfile('Ello.cfg.debug', 'Ello.cfg')
     else:
         shutil.copyfile('Ello.cfg.release', 'Ello.cfg')
-    delphi.build_project("Ello.dpr", debug)
+    delphi.build_project("Ello.dpr", args.debug)
 
 def compile_ello_project():
     shutil.copyfile('Ello.cfg.debug', 'Ello.cfg')
@@ -81,12 +83,6 @@ def empacota_executavel(nome_executavel):
     nome_pacote = empacota(nome_executavel, nome_pacote)
     nome_pacote = gera_sfx(nome_pacote)
     return nome_pacote
-
-def build_and_deploy_silently():
-    """ Build e deploy silencioso
-    """
-    ello.build()
-    deployer.deploy()
 
 def deploy_test_version():
     gera_resources()
