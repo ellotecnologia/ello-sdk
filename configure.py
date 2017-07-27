@@ -20,9 +20,9 @@ def atualiza_dependencias():
             if re.match('^ACBr', linha):
                 codigo_hash = extrai_hash_do_pacote(arquivo_leiame)
                 checkout_pacote('trunk2', PASTA_COMPONENTES, codigo_hash)
-            if re.match('^PngComponentes', linha):
+            if re.match('^PngComponents', linha):
                 codigo_hash = extrai_hash_do_pacote(arquivo_leiame)
-                checkout_pacote('PngComponentes', PASTA_COMPONENTES, codigo_hash)
+                checkout_pacote('PngComponents', PASTA_COMPONENTES, codigo_hash)
             if re.match('^Ello', linha):
                 codigo_hash = extrai_hash_do_pacote(arquivo_leiame)
                 checkout_pacote('ello', PASTA_PROJETO_ELLO, codigo_hash)
