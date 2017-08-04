@@ -39,7 +39,8 @@ def build_and_deploy(args):
           * Atualização do wiki (links de download e changelog)
           * Notificar suporte
     """
-    run_test_pipeline()
+    if args.run_tests:
+        run_test_pipeline()
     build_ello_project(args)
 
     nome_executavel = output_folder() + "\\Ello.exe"

@@ -30,6 +30,7 @@ def parse_args():
     deploy_cmd.add_argument("--debug", type=bool, default=False, help=u"Compila com modo debug ativo")
     deploy_cmd.add_argument("--ignore-installer", default=True, action="store_false", dest="build_installer", help=u"Não faz o build do instalador")
     deploy_cmd.add_argument("--ignore-wiki", default=True, action="store_false", dest="update_wiki", help=u"Atualizar wiki no servidor")
+    deploy_cmd.add_argument("--ignore-tests", default=False, action="store_false", dest="run_tests", help=u"Ignora a execução da suite de testes")
     deploy_cmd.add_argument("--no-notification", default=True, action="store_false", dest="notify_deploy_action", help=u"Notificar sobre o deploy")
 
     return parser.parse_args()
