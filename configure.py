@@ -1,14 +1,39 @@
 #coding: utf8
 import os
+import os.path
 import re
 import subprocess
 import argparse
+import json
 
 PASTA_COMPONENTES = os.getenv('COMPONENTES')
 PASTA_PROJETO_ELLO = PASTA_COMPONENTES + "\\.." 
 FNULL = open(os.devnull, 'w')
 
 def atualiza_dependencias():
+    """ Faz checkout das revisões contidas no arquivo LEIAME.txt ou package.json
+    """
+    if os.path.isfile('package.json'):
+        atualiza_dependencias_package_json()
+    else:
+        atualiza_dependencias_modo_retrocompatibilidade()
+
+def atualiza_dependencias_package_json():
+    print(u'Coletando informações do arquivo package.json')
+    with open('package.json', 'r') as json_file:
+        package_info = json.load(json_file)
+    dependencies = package_info['dependencies']
+    for dependency in dependencies:
+        nome_pacote = dependency
+        codigo_hash = dependencies[dependency]
+        if re.match('ello', nome_pacote, re.I):
+            checkout_pacote(nome_pacote, PASTA_PROJETO_ELLO, codigo_hash)
+        else:
+            checkout_pacote(nome_pacote, PASTA_COMPONENTES, codigo_hash)
+
+def atualiza_dependencias_modo_retrocompatibilidade():
+    """ Modo de retrocompatibilidade para funcionar com revisões antigas
+    """
     with open('LEIAME.txt', 'r') as arquivo_leiame:
         while True:
             linha = arquivo_leiame.readline()
