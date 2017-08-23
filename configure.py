@@ -5,6 +5,7 @@ import re
 import subprocess
 import argparse
 import json
+import collections
 
 PASTA_COMPONENTES = os.getenv('COMPONENTES')
 PASTA_PROJETO_ELLO = PASTA_COMPONENTES + "\\.." 
@@ -53,21 +54,15 @@ def atualiza_dependencias_modo_retrocompatibilidade():
                 checkout_pacote('ello', PASTA_PROJETO_ELLO, codigo_hash)
 
 def congela_dependencias():
-    saida = u"""
-Excellent
-  Repositório : git@bitbucket.org:ellotecnologia/excellent.git
-  Revisão     : {0}
+    with open('package.json', 'r') as f:
+        package_info = json.load(f, object_pairs_hook=collections.OrderedDict)
 
-ACBr
-  Repositório : ssh://git@10.1.1.100:2202/var/repos/acbr-trunk2.git
-  Revisão     : {1}
-"""
-    revisao_excellent  = obtem_ultimo_commit('{0}/Excellent'.format(PASTA_COMPONENTES))
-    revisao_acbr       = obtem_ultimo_commit('{0}/trunk2'.format(PASTA_COMPONENTES))
-    print saida.format(
-        revisao_excellent,
-        revisao_acbr
-    )
+    package_info['dependencies']['excellent'] = obtem_ultimo_commit('{0}/Excellent'.format(PASTA_COMPONENTES))
+    package_info['dependencies']['trunk2'] = obtem_ultimo_commit('{0}/trunk2'.format(PASTA_COMPONENTES))
+    package_info['dependencies']['ello'] = obtem_ultimo_commit('{0}/ello'.format(PASTA_PROJETO_ELLO))
+
+    with open('package.json', 'w') as f:
+        f.write(json.dumps(package_info, indent=2))
 
 def extrai_hash_do_pacote(arquivo):
     arquivo.readline()
@@ -97,18 +92,20 @@ def baixa_atualizacoes_do_repositorio(nome_pacote):
     subprocess.call('git fetch', stdout=FNULL, stderr=subprocess.STDOUT)
 
 def obtem_ultimo_commit(caminho):
+    curdir = os.getcwd()
     os.chdir(caminho)
     command = 'git log -1 --pretty=format:%H'
     git = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
     out, err = git.communicate()
+    os.chdir(curdir)
     return out
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Ferramenta de gerenciamento de dependencias de pacotes Ello')
-    parser.add_argument('--freeze', action="store_true", default=False)
+    parser.add_argument('--save', action="store_true", default=False)
     args = parser.parse_args()
 
-    if args.freeze:
+    if args.save:
         congela_dependencias()
     else:
         atualiza_dependencias()

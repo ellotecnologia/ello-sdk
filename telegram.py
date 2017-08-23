@@ -19,7 +19,7 @@ def notifica():
     # temp.txt é o arquivo criado ao gerar o changelog
     with open('temp.txt') as f:
         mensagem += f.read().decode('latin1')
-    mensagem += "\n\n[Changelog](http://wiki.ellotecnologia.net.br/wiki:changelog)"
+    mensagem += "\n[Changelog](http://wiki.ellotecnologia.net.br/wiki:changelog)"
     os.remove('temp.txt')
     envia_mensagem(mensagem)
 
