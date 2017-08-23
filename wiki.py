@@ -44,7 +44,7 @@ def atualiza_changelog(wiki):
     ticket_link = "[[http://os.ellotecnologia.net.br/\\1|#\\1]]"
     contents = StringIO()
     print >>contents, u'~~NOTOC~~'
-    print >>contents, u'====== Registro de Atualizações ======'
+    print >>contents, u'====== Registro de Atualizações - Projeto Ello ======'
     print >>contents, u'\\\\'
     with open('CHANGELOG.txt', 'r') as f:
         for line in f:
@@ -53,15 +53,15 @@ def atualiza_changelog(wiki):
             line = re.sub('#(\d+)', ticket_link, line)
             contents.write(line)
     print >>contents, u'===== Anos anteriores ====='
-    print >>contents, u'  * [[changelog:2013]]'
-    print >>contents, u'  * [[changelog:2014]]'
-    print >>contents, u'  * [[changelog:2015]]'
-    print >>contents, u'  * [[changelog:2016]]'
+    print >>contents, u'  * [[changelog:ello:2013]]'
+    print >>contents, u'  * [[changelog:ello:2014]]'
+    print >>contents, u'  * [[changelog:ello:2015]]'
+    print >>contents, u'  * [[changelog:ello:2016]]'
 
     new_page = contents.getvalue()
     contents.close()
 
-    wiki.put_page('wiki:changelog', new_page, summary='', minor='')
+    wiki.put_page('wiki:changelog:ello', new_page, summary='', minor='')
 
 def atualiza_wiki():
     logger.info('Atualizando wiki...')
