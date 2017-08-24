@@ -59,7 +59,8 @@ def congela_dependencias():
 
     package_info['dependencies']['excellent'] = obtem_ultimo_commit('{0}/Excellent'.format(PASTA_COMPONENTES))
     package_info['dependencies']['trunk2'] = obtem_ultimo_commit('{0}/trunk2'.format(PASTA_COMPONENTES))
-    package_info['dependencies']['ello'] = obtem_ultimo_commit('{0}/ello'.format(PASTA_PROJETO_ELLO))
+    if package_info['dependencies'].has_key('ello'):
+        package_info['dependencies']['ello'] = obtem_ultimo_commit('{0}/ello'.format(PASTA_PROJETO_ELLO))
 
     with open('package.json', 'w') as f:
         f.write(json.dumps(package_info, indent=2))
