@@ -7,12 +7,16 @@ import re
 import logging
 from datetime import datetime
 
+from pipeline import git
+from delphi.rc_file import update_resource_file
+
 logger = logging.getLogger()
 
-def get_latest_tag():
-    cmd = 'git describe --abbrev=0 --tags' 
-    p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-    return p.communicate()[0].strip()
+def get_next_tag():
+    version_list = git.get_latest_tag().split('.')
+    next_build_number = int(version_list[-1]) + 1
+    version_list[-1] = str(next_build_number)
+    return version_list
 
 def generate_temp_changelog(latest_tag, changes):
     major = ".".join(latest_tag.split('.')[:-1])
@@ -38,46 +42,31 @@ def merge_temp_with_changelog():
                 for line in infile:
                     outfile.write(line)
     shutil.copyfile('result.txt', 'CHANGELOG.txt')
-    #os.remove('temp.txt')
     os.remove('result.txt')
-
-def update():
-    logger.info("Atualizando arquivo CHANGELOG.txt")
-    latest_tag = get_latest_tag()
-    changes = get_change_list(latest_tag)
-
-    generate_temp_changelog(latest_tag, changes)
-
-    notepad = subprocess.Popen(['notepad', 'temp.txt'])
-    notepad.wait()
-
-    merge_temp_with_changelog()
 
 def get_change_list(from_tag):
     cmd = ['git', 'changelog', '--reverse', '{}..'.format(from_tag)]
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     return p.communicate()[0].splitlines()
 
-def commit():
-    logger.info(u"Commitando atualização do changelog...")
-    subprocess.call(u'git ci -am "Atualização do changelog"'.encode('latin1'))
+def update_changelog_file():
+    logger.info("Updating CHANGELOG.txt")
+    latest_tag = git.get_latest_tag()
+    changes = get_change_list(latest_tag)
+    generate_temp_changelog(latest_tag, changes)
+    notepad = subprocess.Popen(['notepad', 'temp.txt'])
+    notepad.wait()
+    merge_temp_with_changelog()
 
-def push():
-    logger.info(u"Fazendo push do changelog...")
-    exit_code = subprocess.call('git push')
-    if exit_code>0:
-        logger.info('Falha ao fazer o push do changelog...')
-        sys.exit(1)
-
-def ultima_versao():
-    with open('CHANGELOG.txt', 'r') as f:
-        versao = f.readline()
-    r = re.search(u'são (\d+\.\d+.\d+(\.\d+)*)', versao)
-    versao = r.group(1).split('.')
-    if len(versao)==3:
-        versao.append('0')
-    return versao
+def update_changelog(project_name):
+    update_changelog_file()
+    project_version = get_next_tag()
+    update_resource_file(project_name, *project_version)
+    project_version = '.'.join(project_version)
+    git.commit_changelog(project_version)
+    git.create_version_tag(project_version)
+    git.push()
 
 if __name__=='__main__':
-    update()
+    update_changelog_file()
 

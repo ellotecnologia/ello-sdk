@@ -3,8 +3,10 @@ import os
 import subprocess
 import shlex
 import logging
+from ConfigParser import ConfigParser
 
 from termcolor import cprint
+from pipeline.utils import remove_dcus
 
 FNULL = open(os.devnull, 'wb')
 DELPHI_PATH = os.getenv('DELPHI_BIN')
@@ -12,13 +14,25 @@ COMPILER_PATH = DELPHI_PATH + "\\dcc32.exe"
 
 logger = logging.getLogger()
 
+class DelphiProject:
+
+    def __init__(self, name):
+        self.name = name
+
+    @property
+    def output_folder(self):
+        config = ConfigParser()
+        config.read("{0}.dof".format(self.name))
+        return config.get("Directories", "OutputDir")
+
+    def __repr__(self):
+        return self.name.lower()
+
+    def __str__(self):
+        return self.name.lower()
+
 class BuildError(Exception):
     pass
-
-def resource_compile(resource_filename, output_filename):
-    logger.info("Compilando arquivo de resource: {0}".format(resource_filename))
-    params = "{0}\\brcc32 {1} -fo{2}".format(DELPHI_PATH, resource_filename, output_filename)
-    subprocess.call(params.split(), stdout=FNULL)
 
 def compile_project(project_name):
     logger.info(u"Compilando projeto {0}...".format(project_name))
@@ -29,15 +43,17 @@ def compile_project(project_name):
     else:
         logger.info(u"Projeto compilado com sucesso!")
 
-def build_project(project_filename, debug=True):
+def build_project(project, debug=True):
+    remove_dcus()
+    #import pdb; pdb.set_trace()
     if debug:
         msg = "(Modo DEBUG ativo)"
         params = shlex.split("\"{0}\" -$O- -$W+ -$D+ -$L+ -$Y+ -$C+ -q -b".format(COMPILER_PATH))
     else:
         msg = ''
         params = shlex.split("\"{0}\" -$O+ -$W- -$D- -$L- -$Y- -$C- -q -b -DRELEASEMODE".format(COMPILER_PATH))
-    logger.info(u"Compilando projeto {0} {1}...".format(project_filename, msg))
-    params.append(project_filename)
+    logger.info(u"Compilando projeto {0} {1}...".format(project.name, msg))
+    params.append(project.name)
 
     if debug:
         dcc32 = subprocess.Popen(params, stdout=subprocess.PIPE)
@@ -76,7 +92,7 @@ def build_project(project_filename, debug=True):
                 print line
 
     if exit_code!=0:
-        raise BuildError(u"-> Erro na compilação do projeto {0}".format(project_filename))
+        raise BuildError(u"-> Erro na compilação do projeto {0}".format(project.name))
 
 if __name__=="__main__":
     build_project("Ello.dpr")

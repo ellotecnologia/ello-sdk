@@ -4,10 +4,10 @@ import shlex
 import subprocess
 import logging
 
-import changelog
-import ello_deploy_pipeline as ello
-from utils import temp_chdir
-from deployer import envia_por_scp
+from pipeline import changelog
+#from pipeline import deploy_pipeline
+from pipeline.utils import temp_chdir
+from pipeline.deployer import envia_por_scp
 
 logger = logging.getLogger()
 
@@ -22,7 +22,7 @@ def build():
 
 def deploy():
     versao = '.'.join(changelog.ultima_versao())
-    release_path = ello.output_folder()
+    #release_path = deploy_pipeline.output_folder()
     filename = "Ello-Instalador-{0}.exe".format(versao)
     with temp_chdir('/dev/ello-instalador/Output'):
         envia_por_scp(filename)

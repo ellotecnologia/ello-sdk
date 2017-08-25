@@ -5,8 +5,8 @@ from StringIO import StringIO
 
 import dokuwikixmlrpc
 
-import changelog
 import config
+from pipeline import git
 
 logger = logging.getLogger()
 
@@ -39,12 +39,16 @@ def atualiza_pagina_downloads(wiki, versao):
         executavel=executavel)
     wiki.put_page('wiki:downloads', new_page, summary='', minor='')
 
-def atualiza_changelog(wiki):
-    logger.info('Atualizando Changelog do wiki...')
+def atualiza_changelog(wiki, project_name):
+    logger.info('Atualizando Changelog do projeto {0} no wiki...'.format(project_name))
+    new_page = create_page_contents(project_name)
+    wiki.put_page('wiki:changelog:{0}'.format(project_name), new_page, summary='', minor='')
+
+def create_page_contents(project_name):
     ticket_link = "[[http://os.ellotecnologia.net.br/\\1|#\\1]]"
     contents = StringIO()
     print >>contents, u'~~NOTOC~~'
-    print >>contents, u'====== Registro de Atualizações - Projeto Ello ======'
+    print >>contents, u'====== Registro de Atualizações - {0} ======'.format(project_name)
     print >>contents, u'\\\\'
     with open('CHANGELOG.txt', 'r') as f:
         for line in f:
@@ -52,31 +56,24 @@ def atualiza_changelog(wiki):
             line = re.sub('^-', '  *', line)
             line = re.sub('#(\d+)', ticket_link, line)
             contents.write(line)
-    print >>contents, u'===== Anos anteriores ====='
-    print >>contents, u'  * [[changelog:ello:2013]]'
-    print >>contents, u'  * [[changelog:ello:2014]]'
-    print >>contents, u'  * [[changelog:ello:2015]]'
-    print >>contents, u'  * [[changelog:ello:2016]]'
-
-    new_page = contents.getvalue()
+    result = contents.getvalue()
     contents.close()
+    return result
 
-    wiki.put_page('wiki:changelog:ello', new_page, summary='', minor='')
-
-def atualiza_wiki():
+def update_wiki_pages(project_name):
     logger.info('Atualizando wiki...')
     try:
         wiki = dokuwikixmlrpc.DokuWikiClient(WIKI_URL, config.wiki_user, config.wiki_password)
     except:
         logger.info('Erro ao atualizar o wiki!')
         return
-    versao = '.'.join(changelog.ultima_versao())
+    versao = '.'.join(git.get_latest_tag())
     try:
-        atualiza_pagina_downloads(wiki, versao)
-        atualiza_changelog(wiki)
+        #atualiza_pagina_downloads(wiki, versao)
+        atualiza_changelog(wiki, project_name)
     except dokuwikixmlrpc.DokuWikiXMLRPCError:
         logger.info('Erro ao atualizar o wiki!')
 
 if __name__=="__main__":
-    atualiza_wiki()
+    update_wiki_pages()
 

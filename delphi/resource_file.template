@@ -17,15 +17,15 @@ BEGIN
         BLOCK "041604E4"
         BEGIN
             VALUE "CompanyName", "Ello Tecnologia\0"
-            VALUE "FileDescription", "Sistema Ello - Automação Comercial\0"
+            VALUE "FileDescription", "{project_name}\0"
             VALUE "FileVersion", "{major}.{minor}.{build}.{release}\0"
-            VALUE "InternalName", "Ello\0"
-            VALUE "LegalCopyright", "Ello Tecnologia Ltda\0"
+            VALUE "InternalName", "{project_name}\0"
+            VALUE "LegalCopyright", "Ello tecnologia Ltda\0"
             VALUE "LegalTrademarks", "Ello tecnologia\0"
-            VALUE "OriginalFilename", "Ello.exe\0"
-            VALUE "ProductName", "Sistema Ello\0"
+            VALUE "OriginalFilename", "{project_name}.exe\0"
+            VALUE "ProductName", "{project_name}\0"
             VALUE "ProductVersion", "{major}.{minor}\0"
-            VALUE "Comments", "Sistema ERP Ello\0"
+            VALUE "Comments", "{project_name}\0"
         END
     END
 

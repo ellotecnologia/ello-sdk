@@ -2,18 +2,33 @@
 import sys
 import logging
 import argparse
+import json
+import os.path
 
-import wiki
-import changelog
-import notificador
-import instalador
 import delphi
-import ello_deploy_pipeline as pipeline
-import test_pipeline
+
+from pipeline import git
+from pipeline import wiki
+from pipeline import changelog
+from pipeline import deploy_pipeline
+from pipeline import test_pipeline
+from pipeline.utils import clean_working_dir
+from pipeline.notifications import notify_team
 
 logging.basicConfig(format='=> %(message)s')
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
+class PackageFileNotFound(Exception):
+    pass
+
+def get_project_name():
+    package_file = 'package.json'
+    if not os.path.isfile(package_file):
+        raise PackageFileNotFound('Package file not found')
+    with open(package_file, 'r') as f:
+        package = json.load(f)
+    return package['name']
 
 def parse_args():
     parser = argparse.ArgumentParser(description=u"Utilitário para build e deploy do projeto ello")
@@ -23,6 +38,9 @@ def parse_args():
     deploy_cmd    = commands.add_parser("deploy", help=u"Faz o build e deploy do projeto para o servidor")
     changelog_cmd = commands.add_parser("changelog", help=u"Constroi o changelog")
     clean_cmd     = commands.add_parser("clean", help=u"Limpa pasta do projeto (remove *.dcu e outros arquivos)")
+    notify_cmd    = commands.add_parser("notify", help=u"Envia notificação de lançamento de revisão para o time")
+    wiki_cmd      = commands.add_parser("wiki", help=u"Atualiza páginas do wiki")
+    resource_cmd  = commands.add_parser("resource", help=u"Atualiza arquivo de resources")
     pre_cmd       = commands.add_parser("pre", help=u"Cria um pre-release e envia para o servidor")
 
     all_cmd.add_argument("--debug", type=bool, default=True, help=u"Compila com modo debug ativo")
@@ -38,30 +56,23 @@ def parse_args():
 def main():
     args = parse_args()
     command = args.command
+    project = delphi.DelphiProject(get_project_name())
 
     if command=='all':
-        pipeline.build_ello_project(args)
+        delphi.build_project(project, args)
     elif command=='deploy':
-        pipeline.build_and_deploy(args)
-    elif command=='pre':
-        pipeline.build_and_deploy_pre_release()
+        deploy_pipeline.build_and_deploy(project, args)
     elif command=='changelog':
-        pipeline.atualiza_changelog()
+        changelog.update_changelog(project)
     elif command=='clean':
-        pipeline.clean_working_dir()
-    #elif (param=='resources') or (param=='res'):
-    #    pipeline.gera_resources()
-    #elif (param=='installer'):
-    #    instalador.build_and_deploy()
-    elif (command=='test') or (command=='tests'):
-        test_pipeline.run_test_pipeline()
-    #elif param=='wiki':
-    #    wiki.atualiza_wiki()
-    #elif param=='notify':
-    #    notificador.notifica()
-    #else:
-    #    pipeline.compile_ello_project()
-
+        clean_working_dir()
+    elif command=='resource':
+        last_tag = git.get_latest_tag().split('.')
+        delphi.rc_file.update_resource_file(project, *last_tag)
+    elif command=='wiki':
+        wiki.update_wiki_pages(project)
+    elif command=='notify':
+        notify_team(project)
 
 if __name__=="__main__":
     try:
