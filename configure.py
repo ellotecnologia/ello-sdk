@@ -20,7 +20,7 @@ def atualiza_dependencias():
         atualiza_dependencias_modo_retrocompatibilidade()
 
 def atualiza_dependencias_package_json():
-    print(u'Coletando informações do arquivo package.json')
+    print(u'=> Coletando metadados do projeto')
     with open('package.json', 'r') as json_file:
         package_info = json.load(json_file)
     dependencies = package_info['dependencies']
@@ -69,13 +69,15 @@ def extrai_hash_do_pacote(arquivo):
     arquivo.readline()
     return arquivo.readline().split(':')[1].strip()
 
-def checkout_pacote(nome_pacote, caminho, hash_revisao):
-    print u'=> Atualizando {0} ({1})'.format(nome_pacote, hash_revisao[0:7])
+def checkout_pacote(nome_pacote, caminho, novo_hash):
     os.chdir("{0}/{1}".format(caminho, nome_pacote))
     if not (copia_de_trabalho_limpa()):
-        print u"Existem modificações não commitadas na pasta {0}\\{1}. Cancelando atualização.".format(caminho, nome_pacote)
+        print(u"Existem modificações não commitadas na pasta {0}\\{1}. Cancelando atualização.".format(caminho, nome_pacote))
         return
-    command = 'git checkout {0}'.format(hash_revisao).split()
+    if novo_hash==obtem_hash_atual():
+        return
+    print(u'=> Atualizando {0} para a revisão {1}'.format(nome_pacote, novo_hash[0:7]))
+    command = 'git checkout {0}'.format(novo_hash).split()
     return_code = subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT)
 
     # Se der erro ao fazer o checkout da revisão, tenta fazer um fetch e fazer o checkout novamente
@@ -83,12 +85,19 @@ def checkout_pacote(nome_pacote, caminho, hash_revisao):
         baixa_atualizacoes_do_repositorio(nome_pacote)
         subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT)
 
+def obtem_hash_atual():
+    """ Obtem o hash do último commit no repositório atual
+    """
+    command = 'git log -1 --pretty="%H"'
+    git = subprocess.Popen(command, stdout=subprocess.PIPE)
+    return unicode(git.communicate()[0].strip())
+
 def copia_de_trabalho_limpa():
     return_code = subprocess.call("git diff-index --quiet HEAD --", stdout=FNULL, stderr=subprocess.STDOUT)
     return return_code==0
 
 def baixa_atualizacoes_do_repositorio(nome_pacote):
-    print "Fazendo fetch do repositorio", nome_pacote
+    print("Fazendo fetch do repositorio {0}".format(nome_pacote))
     os.chdir(PASTA_COMPONENTES + '/' + nome_pacote)
     subprocess.call('git fetch', stdout=FNULL, stderr=subprocess.STDOUT)
 
