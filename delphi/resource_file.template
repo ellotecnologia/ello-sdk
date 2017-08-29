@@ -1,4 +1,4 @@
-MAINICON ICON "Ello.ico"
+MAINICON ICON "{project_name}.ico"
 
 1 VERSIONINFO
 FILEVERSION {major},{minor},{build},{release}

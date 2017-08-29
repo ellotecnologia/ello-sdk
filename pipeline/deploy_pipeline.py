@@ -24,8 +24,9 @@ def build_and_deploy(project, args):
 def build_and_deploy_other_project(project, args):
     delphi.build_project(project, args)
     artifact_name = project.output_folder + "\\{0}.exe".format(project)
-    #shutil.copyfile('Ello.cfg.debug', 'Ello.cfg')
-    deployer.deploy(artifact_name)
+    deploy_name = '{0}/{1}-{2}.exe'.format(project.output_folder, project.name, project.version)
+    shutil.copyfile(artifact_name, deploy_name)
+    deployer.deploy(deploy_name)
     if args.update_wiki:
         wiki.update_wiki_pages(project)
     if args.notify_deploy_action:
@@ -35,7 +36,6 @@ def build_and_deploy_ello(project, args):
     if args.run_tests:
         run_test_pipeline()
 
-    project.version = git.get_latest_tag()
     delphi.build_project(project, debug=False)
 
     artifact_name = project.output_folder + "\\{0}.exe".format(project)

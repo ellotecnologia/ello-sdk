@@ -15,12 +15,12 @@ BEGIN
 END
 """
 
-def update_resource_file(project_name, major, minor, build, release=0):
+def update_resource_file(project, major, minor, build, release=0):
     logger.info(u"Gerando arquivo resources da versão {0}.{1}.{2}.{3}".format(major, minor, build, release))
-    create_resource_file(project_name, major, minor, build, release, BUILD_INFO)
-    compile_resource_file('{0}.rc'.format(project_name))
+    create_resource_file(project.name, major, minor, build, release, BUILD_INFO)
+    compile_resource_file('{0}.rc'.format(project.name))
     # Remove informacoes de build para deixar o arquivo rc sem as informações de build
-    create_resource_file(project_name, major, minor, build, release, '')
+    create_resource_file(project.name, major, minor, build, release, '')
 
 def create_resource_file(project_name, major, minor, build, release, build_info):
     template = get_template_file_contents()

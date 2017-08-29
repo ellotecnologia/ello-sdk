@@ -58,13 +58,13 @@ def update_changelog_file():
     notepad.wait()
     merge_temp_with_changelog()
 
-def update_changelog(project_name):
+def update_changelog(project):
     update_changelog_file()
-    project_version = get_next_tag()
-    update_resource_file(project_name, *project_version)
-    project_version = '.'.join(project_version)
-    git.commit_changelog(project_version)
-    git.create_version_tag(project_version)
+    project.increment_version()
+    version_info = project.version.split('.')
+    update_resource_file(project, *version_info)
+    git.commit_changelog(project.version)
+    git.create_version_tag(project.version)
     git.push()
 
 if __name__=='__main__':

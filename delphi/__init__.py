@@ -3,6 +3,8 @@ import os
 import subprocess
 import shlex
 import logging
+import json
+import collections
 from ConfigParser import ConfigParser
 
 from termcolor import cprint
@@ -19,11 +21,26 @@ class DelphiProject:
     def __init__(self, name):
         self.name = name
 
+    def increment_version(self):
+        with open('package.json', 'r') as f:
+            package_info = json.load(f, object_pairs_hook=collections.OrderedDict)
+        version_info = package_info['version'].split('.')
+        version_info[-1] = str(int(version_info[-1]) + 1)
+        package_info['version'] = '.'.join(version_info)
+        with open('package.json', 'w') as f:
+            f.write(json.dumps(package_info, indent=2))
+
     @property
     def output_folder(self):
         config = ConfigParser()
         config.read("{0}.dof".format(self.name))
         return config.get("Directories", "OutputDir")
+
+    @property
+    def version(self):
+        with open('package.json', 'r') as f:
+            package_info = json.load(f)
+        return package_info['version']
 
     def __repr__(self):
         return self.name.lower()
