@@ -45,19 +45,26 @@ def validate_report_query_function():
     conn = fdb.connect('/ello/dados/testes/TESTES-1.2.53.ELLO')
     def validate_query_function(report_filename, report):
         cursor = conn.cursor()
-        try:
-            query = define_filter_values(report.sqlquerystring)
-        except Exception as e:
-            log(u"Erro na abertura do relatório {0} ({1})".format(report_filename, e))
-            return
-        try:
-            cursor.execute(query)
-        except fdb.DatabaseError as e:
-            log(u'Erro no relatório "{0}"'.format(report_filename))
-            log(u"{0}".format(e[0]))
-            log(u"\n{0}\n".format(query))
-            log(u"---------")
+        if 'Lista de Clientes.rpt' in report_filename:
+            import pdb; pdb.set_trace()
+        for query in extract_selects(report.sqlquerystring):
+            query = define_filter_values(query)
+            try:
+                cursor.execute(query)
+            except fdb.DatabaseError as e:
+                log(u'Erro no relatório "{0}"'.format(report_filename))
+                log(u"{0}".format(e[0]))
+                log(u"\n{0}\n".format(query))
+                log(u"---------")
     return validate_query_function
+
+def extract_selects(sqlquery):
+    queries = sqlquery.lower().split('select')
+    for query in queries:
+        if not query:
+            continue
+        query = query.replace('"', '')
+        yield 'select ' + query
 
 def define_filter_values(sqlquery):
     query = sqlquery
