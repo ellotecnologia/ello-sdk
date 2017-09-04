@@ -98,7 +98,6 @@ def copia_de_trabalho_limpa():
 
 def baixa_atualizacoes_do_repositorio(nome_pacote):
     print("Fazendo fetch do repositorio {0}".format(nome_pacote))
-    os.chdir(PASTA_COMPONENTES + '/' + nome_pacote)
     subprocess.call('git fetch', stdout=FNULL, stderr=subprocess.STDOUT)
 
 def obtem_ultimo_commit(caminho):
