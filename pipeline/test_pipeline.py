@@ -22,7 +22,7 @@ def build_tests(project_name, description):
 
     resource_compile('Ello.rc', project_name)
 
-    dcc32 = subprocess.Popen('dcc32 -q -b -DMODO_CONSOLE {0}'.format(project_name).split(), stdout=FNULL)
+    dcc32 = subprocess.Popen('dcc32 -q -b -DVCL -DRETAGUARDA -DMODO_CONSOLE {0}'.format(project_name).split(), stdout=FNULL)
     exit_code = dcc32.wait()
 
     if exit_code>0:
