@@ -19,7 +19,7 @@ logger = logging.getLogger()
 class DelphiProject:
 
     def __init__(self, name):
-        self.name = name
+        self._name = name
 
     def increment_version(self):
         with open('package.json', 'r') as f:
@@ -31,10 +31,18 @@ class DelphiProject:
             f.write(json.dumps(package_info, indent=2))
 
     @property
+    def name(self):
+        return self._name.lower()
+
+    @property
     def output_folder(self):
         config = ConfigParser()
         config.read("{0}.dof".format(self.name))
         return config.get("Directories", "OutputDir")
+
+    @property
+    def output_file(self):
+        return self.output_folder + "\\{0}.exe".format(self)
 
     @property
     def version(self):
@@ -43,10 +51,10 @@ class DelphiProject:
         return package_info['version']
 
     def __repr__(self):
-        return self.name.lower()
+        return self._name
 
     def __str__(self):
-        return self.name.lower()
+        return self._name
 
 class BuildError(Exception):
     pass

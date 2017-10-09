@@ -1,6 +1,8 @@
 #coding: utf8
 import os
+import os.path
 import shutil
+import subprocess
 
 import delphi
 
@@ -14,47 +16,69 @@ from pipeline.packer import empacota, gera_sfx
 from pipeline.notifications import notify_team
 from pipeline.test_pipeline import run_test_pipeline
 
+
 def build_and_deploy(project, args):
+    build_project(project, args)
+    pack_artifact(project, args)
+    deploy_artifact(project, args)
+
+
+def build_project(project, args):
+    if os.path.isfile('scripts/build.bat'):
+        call_custom_build()
+        return
     # quick fix (kludge) to handle different projects
-    if project.name.lower()=='ello':
-        build_and_deploy_ello(project, args)
+    if project.name=='ello':
+        build_ello_project(project, args)
     else:
-        build_and_deploy_other_project(project, args)
-
-def build_and_deploy_other_project(project, args):
-    delphi.build_project(project, args)
-    artifact_name = project.output_folder + "\\{0}.exe".format(project)
-    deploy_name = '{0}/{1}-{2}.exe'.format(project.output_folder, project.name, project.version)
-    shutil.copyfile(artifact_name, deploy_name)
-    deployer.deploy(deploy_name)
-    if args.update_wiki:
-        wiki.update_wiki_pages(project)
-    if args.notify_deploy_action:
-        notify_team(project)
-
-def build_and_deploy_ello(project, args):
-    if args.run_tests:
-        run_test_pipeline()
-
-    delphi.build_project(project, debug=False)
-
-    artifact_name = project.output_folder + "\\{0}.exe".format(project)
-    signtool.sign(artifact_name)
-    artifact_name = build_packed_artifact(project, artifact_name)
-    deployer.deploy(artifact_name)
-
+        delphi.build_project(project, args)
     #if args.build_installer:
     #    instalador.build_and_deploy()
+
+
+def pack_artifact(project, args):
+    if os.path.isfile('scripts/pack.bat'):
+        call_custom_packer(project)
+        return
+    if project.name=='ello':
+        project.artifact_name = build_packed_artifact(project)
+    else:
+        project.artifact_name = '{0}/{1}-{2}.exe'.format(project.output_folder, project.name, project.version)
+        shutil.copyfile(project.output_file, project.artifact_name)
+
+
+def deploy_artifact(project, args):
+    deployer.deploy(project.artifact_name)
     if args.update_wiki:
         wiki.update_wiki_pages(project)
     if args.notify_deploy_action:
         notify_team(project)
 
-def build_packed_artifact(project, executable_name):
+
+def build_ello_project(project, args):
+    if args.run_tests:
+        run_test_pipeline()
+    delphi.build_project(project, debug=False)
+    signtool.sign(project.output_file)
+
+
+def build_packed_artifact(project):
     package_name = "{0}\\{1}-{2}".format(project.output_folder, project.name, project.version)
-    package_name = empacota(executable_name, package_name)
+    package_name = empacota(project.ouput_file, package_name)
     package_name = gera_sfx(package_name)
     return package_name
+
+
+def call_custom_build():
+    print("Executando build customizado")
+    subprocess.call(os.getcwd() + '\\scripts\\build.bat')
+
+
+def call_custom_packer(project):
+    print("Executando packer customizado")
+    artifact_name = subprocess.check_output([os.getcwd() + '\\scripts\\pack.bat', project.version]).strip()
+    project.artifact_name = artifact_name
+
 
 #def build_and_deploy_pre_release():
 #    nome_executavel = output_folder() + "\\Ello.exe"
