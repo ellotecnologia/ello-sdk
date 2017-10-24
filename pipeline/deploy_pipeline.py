@@ -64,7 +64,7 @@ def build_ello_project(project, args):
 
 def build_packed_artifact(project):
     package_name = "{0}\\{1}-{2}".format(project.output_folder, project.name, project.version)
-    package_name = empacota(project.ouput_file, package_name)
+    package_name = empacota(project.output_file, package_name)
     package_name = gera_sfx(package_name)
     return package_name
 
