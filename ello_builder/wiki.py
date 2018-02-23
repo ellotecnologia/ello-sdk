@@ -1,4 +1,5 @@
 #coding: utf8
+import sys
 import re
 import logging
 from StringIO import StringIO
@@ -6,7 +7,7 @@ from StringIO import StringIO
 import dokuwikixmlrpc
 
 import config
-from pipeline import git
+import git_utils as git
 
 logger = logging.getLogger()
 
@@ -45,7 +46,7 @@ def atualiza_changelog(wiki, project_name):
     wiki.put_page('wiki:changelog:{0}'.format(project_name), new_page, summary='', minor='')
 
 def create_page_contents(project_name):
-    ticket_link = "[[http://os.ellotecnologia.net.br/\\1|#\\1]]"
+    ticket_link = "[[http://os.ellotecnologia.net.br/chamados/\\1|#\\1]]"
     contents = StringIO()
     print >>contents, u'~~NOTOC~~'
     print >>contents, u'====== Registro de Atualizações - {0} ======'.format(project_name)
@@ -75,5 +76,5 @@ def update_wiki_pages(project_name):
         logger.info('Erro ao atualizar o wiki!')
 
 if __name__=="__main__":
-    update_wiki_pages()
+    update_wiki_pages(sys.argv[1])
 

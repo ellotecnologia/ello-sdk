@@ -33,11 +33,13 @@ def extrai_programas(output):
 def extrai_menus(output):
     output.write(separador)
     query = ("INSERT INTO TGERMENU (IDMENU, IDMENUPARENT, DESCRICAO, TIPO, IMAGEM, IDPROGRAMA, EMPRESA, USUARIO) "
-             "VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}' );\n")
+             "VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}');\n")
     menus = db['TGERMENU'].find(order_by=['idmenu'])
     for row in menus:
-        output.write(query.format(row['idmenu'], row['idmenuparent'], row['descricao'], row['tipo'], \
-                                  row['imagem'], row['idprograma'], row['empresa'], row['usuario']))
+        insert_query = query.format(row['idmenu'], row['idmenuparent'], row['descricao'], row['tipo'], \
+                                    row['imagem'], row['idprograma'], row['empresa'], row['usuario'])
+        insert_query = insert_query.replace("'None'", "NULL")
+        output.write(insert_query)
     output.write('COMMIT;\n')
             
 def extrai_relatorios(output):

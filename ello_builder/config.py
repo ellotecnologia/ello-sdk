@@ -18,7 +18,6 @@ ftp_path = config.get('ftp', 'path')
 wiki_user = config.get('wiki', 'user')
 wiki_password = config.get('wiki', 'password')
 
-skype_group_blob = config.get('skype', 'group_blob')
 whatsapp_url     = config.get('whatsapp', 'url')
 whatsapp_numbers = [n.strip() for n in config.get('whatsapp', 'notify_numbers').split(',')]
 telegram_token = config.get('telegram', 'token')
