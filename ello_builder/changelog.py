@@ -1,4 +1,7 @@
-# coding: utf8
+# encoding: utf8
+from __future__ import unicode_literals
+from __future__ import print_function
+
 import os
 import sys
 import subprocess
@@ -38,12 +41,14 @@ def get_previous_version(version):
 def generate_temp_changelog(version, changes):
     current_date = datetime.now().strftime("%d/%m/%Y")
     headline = u"{} - Revisão {}\n".format(current_date, version)
-    f = open('temp.txt', 'w')
-    print >>f, headline.encode('latin1')
-    for line in changes:
-        print >>f, line #.decode('utf8').encode('latin1')
-    print >>f, ""
-    f.close()
+    with open('temp.txt', 'w') as f:
+        f.write(headline.encode('latin1'))
+        f.write("\n")
+        for line in changes:
+            # TODO: ignorar commits com as palavras: thread, metadado, refatoracao, unit
+            f.write(line.decode('utf8').encode('latin1'))
+            f.write("\n")
+        f.write("\n")
 
 
 def edit_temp_changelog(filename):

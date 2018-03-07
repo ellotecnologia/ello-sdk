@@ -1,5 +1,8 @@
 #!/c/Python27/python.exe
-#coding: utf8
+# encoding: utf8
+from __future__ import unicode_literals
+from __future__ import print_function
+
 import os
 import os.path
 import re
@@ -13,8 +16,8 @@ PASTA_PROJETO_ELLO = PASTA_COMPONENTES + "\\.."
 FNULL = open(os.devnull, 'w')
 
 
-def atualiza_dependencias():
-    """ Faz checkout das revisões contidas no arquivo LEIAME.txt ou package.json
+def update_project_dependencies():
+    """ Update current project's dependencies to reflect package.json file
     """
     if os.path.isfile('package.json'):
         atualiza_dependencias_package_json()
@@ -23,17 +26,17 @@ def atualiza_dependencias():
 
 
 def atualiza_dependencias_package_json():
-    print(u'=> Coletando metadados do projeto')
+    print('Coletando metadados do projeto')
     with open('package.json', 'r') as json_file:
         package_info = json.load(json_file)
     dependencies = package_info['dependencies']
     for dependency in dependencies:
-        nome_pacote = dependency
+        package_name = dependency
         codigo_hash = dependencies[dependency]
-        if re.match('ello', nome_pacote, re.I):
-            checkout_pacote(nome_pacote, PASTA_PROJETO_ELLO, codigo_hash)
+        if re.match('ello', package_name, re.I):
+            checkout_pacote(package_name, PASTA_PROJETO_ELLO, codigo_hash)
         else:
-            checkout_pacote(nome_pacote, PASTA_COMPONENTES, codigo_hash)
+            checkout_pacote(package_name, PASTA_COMPONENTES, codigo_hash)
 
 
 def atualiza_dependencias_modo_retrocompatibilidade():
@@ -58,32 +61,48 @@ def atualiza_dependencias_modo_retrocompatibilidade():
                 checkout_pacote('ello', PASTA_PROJETO_ELLO, codigo_hash)
 
 
-def congela_dependencias():
-    with open('package.json', 'r') as f:
-        package_info = json.load(f, object_pairs_hook=collections.OrderedDict)
-
-    package_info['dependencies']['excellent'] = obtem_ultimo_commit('{0}/Excellent'.format(PASTA_COMPONENTES))
-    package_info['dependencies']['trunk2'] = obtem_ultimo_commit('{0}/trunk2'.format(PASTA_COMPONENTES))
-    if package_info['dependencies'].has_key('ello'):
-        package_info['dependencies']['ello'] = obtem_ultimo_commit('{0}/ello'.format(PASTA_PROJETO_ELLO))
-
-    with open('package.json', 'w') as f:
-        f.write(json.dumps(package_info, indent=2))
-
-
 def extrai_hash_do_pacote(arquivo):
     arquivo.readline()
     return arquivo.readline().split(':')[1].strip()
 
 
+def freeze_dependencies():
+    """ Updates package.json file with the latest dependencies hashes
+    """
+    with open('package.json', 'r') as f:
+        package_info = json.load(f, object_pairs_hook=collections.OrderedDict)
+
+    dependencies = package_info['dependencies']
+    for package_name in dependencies.iterkeys():
+        package_path = PASTA_COMPONENTES
+        if package_name.lower() == 'ello': # ello is not a package, it's a project
+            package_path = PASTA_PROJETO_ELLO
+        dependencies[package_name] = get_last_git_hash('{}\\{}'.format(package_path, package_name))
+
+    with open('package.json', 'w') as f:
+        f.write(json.dumps(package_info, indent=2))
+
+
+def get_last_git_hash(repo_path):
+    """ Gets the last repo hash
+    """
+    curdir = os.getcwd()
+    os.chdir(repo_path)
+    command = 'git log -1 --pretty=format:%H'
+    git = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    out, err = git.communicate()
+    os.chdir(curdir)
+    return out
+
+
 def checkout_pacote(nome_pacote, caminho, novo_hash):
     os.chdir("{0}/{1}".format(caminho, nome_pacote))
     if not (copia_de_trabalho_limpa()):
-        print(u"Existem modificações não commitadas na pasta {0}\\{1}. Cancelando atualização.".format(caminho, nome_pacote))
+        print("Existem modificações não commitadas na pasta {0}\\{1}. Cancelando atualização.".format(caminho, nome_pacote))
         return
     if novo_hash==obtem_hash_atual():
         return
-    print(u'=> Atualizando {0} para a revisão {1}'.format(nome_pacote, novo_hash[0:7]))
+    print('=> Atualizando {0} para a revisão {1}'.format(nome_pacote, novo_hash[0:7]))
     command = 'git checkout {0}'.format(novo_hash).split()
     return_code = subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT)
 
@@ -111,25 +130,15 @@ def baixa_atualizacoes_do_repositorio(nome_pacote):
     subprocess.call('git fetch', stdout=FNULL, stderr=subprocess.STDOUT)
 
 
-def obtem_ultimo_commit(caminho):
-    curdir = os.getcwd()
-    os.chdir(caminho)
-    command = 'git log -1 --pretty=format:%H'
-    git = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
-    out, err = git.communicate()
-    os.chdir(curdir)
-    return out
-
-
 def main():
     parser = argparse.ArgumentParser(description='Ferramenta de gerenciamento de dependencias de pacotes Ello')
     parser.add_argument('--save', action="store_true", default=False)
     args = parser.parse_args()
 
     if args.save:
-        congela_dependencias()
+        freeze_dependencies()
     else:
-        atualiza_dependencias()
+        update_project_dependencies()
 
 
 if __name__=="__main__":
