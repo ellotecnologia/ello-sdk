@@ -8,7 +8,7 @@ import fileinput
 import re
 import sys
 
-from project import ProjectMetadata
+from ello.project import ProjectMetadata
 from delphi.resource import ResourceFile
 from delphi.dof import DOFFile
 

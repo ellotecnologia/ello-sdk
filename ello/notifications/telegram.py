@@ -2,7 +2,7 @@
 import logging
 
 import telepot
-from ello_builder import config
+from ello.sdk import config
 
 logger = logging.getLogger()
 

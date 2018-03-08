@@ -10,7 +10,7 @@ import re
 import logging
 from datetime import datetime
 
-import git_utils as git
+import git
 
 logger = logging.getLogger()
 

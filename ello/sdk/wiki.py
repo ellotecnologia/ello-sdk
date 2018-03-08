@@ -7,7 +7,7 @@ from StringIO import StringIO
 import dokuwikixmlrpc
 
 import config
-import git_utils as git
+from ello.sdk import git
 
 logger = logging.getLogger()
 

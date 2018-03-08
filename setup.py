@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
-description = 'Ello Dev Utils'
+description = 'Ello SDK'
 
 setup(
-    name='ElloDevUtils',
-    version='0.0.3',
+    name='Ello SDK',
+    version='0.0.4',
     author='Clayton A. Alves',
     author_email='clayton.aa@gmail.com',
     license='MIT',
@@ -17,10 +17,10 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'ell = ello_dev_utils.ell:main',
-            'ordena-uses = ello_dev_utils.ordena_uses:main',
-            'configure = ello_dev_utils.configure:main',
-            'dof = delphi.dof:main',
+            'ell=ello.cli.ell:main',
+            'ordena-uses=ello.cli.ordena_uses:main',
+            'configure=ello.cli.configure:main',
+            'dof=ello.cli.dof:main',
         ]
     },
     include_package_data=True
