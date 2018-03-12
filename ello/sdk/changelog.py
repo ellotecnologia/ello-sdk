@@ -14,6 +14,8 @@ import git
 
 logger = logging.getLogger()
 
+TMP_CHANGELOG_FILE = os.environ.get('TEMP') + '\\ell_changelog.tmp'
+
 
 def make_changelog(metadata):
     logger.info("Updating CHANGELOG.txt")
@@ -23,7 +25,7 @@ def make_changelog(metadata):
     changes = git.get_changes_from(previous_version)
     generate_temp_changelog(new_version, changes)
 
-    edit_temp_changelog('temp.txt')
+    edit_temp_changelog(TMP_CHANGELOG_FILE)
     merge_temp_with_changelog()
 
     git.commit_changelog(new_version)
@@ -41,7 +43,7 @@ def get_previous_version(version):
 def generate_temp_changelog(version, changes):
     current_date = datetime.now().strftime("%d/%m/%Y")
     headline = u"{} - Revisão {}\n".format(current_date, version)
-    with open('temp.txt', 'w') as f:
+    with open(TMP_CHANGELOG_FILE, 'w') as f:
         f.write(headline.encode('latin1'))
         f.write("\n")
         for line in changes:
@@ -57,7 +59,7 @@ def edit_temp_changelog(filename):
 
 
 def merge_temp_with_changelog():
-    filenames = ['temp.txt', 'CHANGELOG.txt']
+    filenames = [TMP_CHANGELOG_FILE, 'CHANGELOG.txt']
     with open('result.txt', 'w') as outfile:
         for fname in filenames:
             with open(fname) as infile:
