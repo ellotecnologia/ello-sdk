@@ -53,6 +53,8 @@ def parse_args():
     cmd.add_parser("workon", help="Atualiza o status de um chamado para 'Em Andamento'") \
         .add_argument("numero_chamado", nargs="?")
 
+    cmd.add_parser("new-cert", help="Cria um novo certificado A1 de teste")
+
     cmd.add_parser("make-changelog", help="Atualiza o arquivo de changelog")
     cmd.add_parser("notify-team", help="Envia notificação de lançamento de revisão para o time")
     cmd.add_parser("update-wiki", help="Atualiza páginas do wiki")
