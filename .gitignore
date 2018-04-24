@@ -3,4 +3,5 @@ venv/*
 *.swp
 dist
 tmp
+bin/
 *.egg-info

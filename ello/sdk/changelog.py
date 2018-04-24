@@ -47,12 +47,29 @@ def generate_temp_changelog(version, changes):
         f.write(headline.encode('latin1'))
         f.write("\n")
         for line in changes:
-            # TODO: ignorar commits com as palavras: thread, metadado, refatoracao, unit
-            f.write(line.decode('utf8').encode('latin1'))
+            line = line.decode('utf8')
+            if ignore_line(line):
+                continue
+            line = apply_some_fixups(line)
+            f.write(line.encode('latin1'))
             f.write("\n")
         f.write("\n")
 
 
+def ignore_line(line):
+    """ Retorna True caso a linha possua alguma das palavras definidas
+    """
+    return re.search('(thread|metadado|refatora..o|unit)', line)
+
+
+def apply_some_fixups(line):
+    # Ajusta o texto para ficar menos pessoal
+    line = re.sub('- adicionei', '- Adicionado', line, flags=re.I)
+    line = re.sub('- criei', '- Criado', line, flags=re.I)
+    line = re.sub('(\w|\d)\(#', '\\1 (#', line)
+    return line
+
+    
 def edit_temp_changelog(filename):
     notepad = subprocess.Popen(['notepad', filename])
     notepad.wait()
