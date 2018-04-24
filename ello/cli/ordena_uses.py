@@ -71,7 +71,10 @@ def basic_units(unit_name):
 def excellent_units(unit_name):
     unit_list = ['ufirebird', 'uquerybuilder', 'uactiverecord', 'speedbuttonstacked']
     unit_name = unit_name.lower()
-    return unit_name.startswith('ell') or unit_name.startswith('excellent') or (unit_name in unit_list)
+    return unit_name.startswith('ell') or \
+           unit_name.startswith('exl') or \
+           unit_name.startswith('excellent') or \
+           (unit_name in unit_list)
 
 
 def other_units(unit_name):
