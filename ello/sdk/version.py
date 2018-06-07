@@ -36,24 +36,25 @@ def bump_version(project_path):
 
     metadata_filename = os.path.join(project_path, 'package.json')
     metadata = ProjectMetadata(metadata_filename)
+    new_version = get_next_version(metadata.version)
 
     main_resource_file = 'resources\\' + metadata.name + '.rc'
     if not os.path.isfile(main_resource_file):
         main_resource_file = metadata.name + '.rc'
 
-    resource_filename = os.path.join(project_path, main_resource_file)
-
-    resource = ResourceFile(resource_filename)
-
-    dof_file = DOFFile(metadata.name + '.dof')
-
-    new_version = get_next_version(metadata.version)
 
     logging.info('Atualizando versão do projeto {} para {}'.format(metadata.project_name, new_version))
 
+    resource_filename = os.path.join(project_path, main_resource_file)
+    if os.path.isfile(resource_filename):
+       resource = ResourceFile(resource_filename)
+       resource.update_version(new_version)
+
+    if os.path.isfile(metadata.name + '.dof'):
+        dof_file = DOFFile(metadata.name + '.dof')
+        dof_file.update_version(new_version)
+
     metadata.update_version(new_version)
-    resource.update_version(new_version)
-    dof_file.update_version(new_version)
 
     if os.path.isfile('Makefile'):
         update_makefile_version(new_version)
