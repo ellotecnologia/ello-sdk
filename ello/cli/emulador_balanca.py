@@ -1,9 +1,10 @@
+# encoding: utf8
 """ Emulador de balança em rede
 """
 import socket
 import itertools
 
-pesos = [0, 0, 0, 0.750, 0.380, 0.485, 0]
+pesos = [0.750, 0.380, 0.485]
 iterador_pesos = itertools.cycle(pesos)
 
 HOST = '127.0.0.1'
@@ -25,6 +26,7 @@ def aguarda_conexao():
                 conn.close()
                 break
             conn.send('{0}'.format(iterador_pesos.next()))
+            conn.close()
 
         print 'closing...'
         conn.close()
