@@ -19,7 +19,8 @@ setup(
         'pyperclip==1.6.0',
         'sqlparse==0.2.4',
         'Pygments==2.2.0',
-        'telepot==12.5'
+        'telepot==12.5',
+        'future==0.16.0'
     ],
     entry_points={
         'console_scripts': [
