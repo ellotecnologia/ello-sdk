@@ -14,6 +14,7 @@ from ello.sdk.wiki import update_wiki_pages
 from ello.chamados import inicia_chamado
 from ello.notifications import notify_team
 from ello.project import ProjectMetadata, init_project, require_dependency
+from ello.exportador import exporta_menus, exporta_programas
 
 from delphi import Project
 from delphi.compiler import Compiler, RELEASE_MODE, DEBUG_MODE
@@ -42,7 +43,7 @@ def build_project(metadata, build_mode):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Utilitário para build e deploy do projeto ello")
+    parser = argparse.ArgumentParser(description="Ferramenta auxiliar de desenvolvimento de projetos Ello")
     cmd = parser.add_subparsers(dest="command", help="Comandos")
 
     cmd.add_parser("init", help="Inicializa projeto")
@@ -61,6 +62,9 @@ def parse_args():
 
     bump_version_cmd = cmd.add_parser("bump-version", help="Incrementa a versão do projeto")
     bump_version_cmd.add_argument("project_path", nargs='?')
+
+    cmd.add_parser("exporta-menus", help="Gera um script de menu conforme banco em uso")
+    cmd.add_parser("exporta-programas", help="Gera um script dos programas cadastrados no banco de dados atual")
 
     #build_cmd = cmd.add_parser("build", help=u"Faz o build do projeto")
     #build_cmd.add_argument("build_mode", nargs='?')
@@ -90,6 +94,10 @@ def main():
         update_wiki_pages(project.name)
     elif command == 'build':
         build_project(ProjectMetadata(), args.build_mode)
+    elif command == 'exporta-menus':
+        exporta_menus()
+    elif command == 'exporta-programas':
+        exporta_programas()
 
 
 if __name__ == "__main__":
