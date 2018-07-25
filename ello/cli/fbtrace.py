@@ -33,7 +33,7 @@ def firebird_trace():
         time_threshold 0
         print_plan true
         print_perf false
-        max_sql_length 4096
+        max_sql_length 8192
     </database>
     """
     trace_id = svc.trace_start(trace_config, 'test_trace_2')
