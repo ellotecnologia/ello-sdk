@@ -13,10 +13,10 @@ setup(
     install_requires = [
         'fdb==1.8',
         'dokuwikixmlrpc==2010-07-19',
-        'requests==2.7.0',
+        'requests',
         'telepot==12.5',
         'colorama==0.3.9',
-        'pyperclip==1.6.0',
+        'pyperclip',
         'sqlparse==0.2.4',
         'Pygments==2.2.0',
         'telepot==12.5',
