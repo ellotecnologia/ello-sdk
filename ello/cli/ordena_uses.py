@@ -149,7 +149,7 @@ def main():
     unit_names = extract_and_sort_unit_block(data)
 
     output = wrap_units_block(unit_names)
-    pyperclip.copy(output)
+    pyperclip.copy(output.encode('latin1'))
 
 
 if __name__ == "__main__":
