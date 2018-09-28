@@ -10,7 +10,6 @@ import sys
 
 from ello.project import ProjectMetadata
 from delphi.resource import ResourceFile
-from delphi.dof import DOFFile
 
 
 def get_next_version(current_version):
@@ -29,37 +28,28 @@ def update_makefile_version(new_version):
             sys.stdout.write(line)
 
 
-def bump_version(project_path):
-    """ Incrementa a versão do projeto
-    """
-    project_path = project_path or '.'
+def bump_version():
+    """ Incrementa a versão do projeto """
+    metadata_filename = 'package.json'
+    project = ProjectMetadata(metadata_filename)
+    new_version = get_next_version(project.version)
 
-    metadata_filename = os.path.join(project_path, 'package.json')
-    metadata = ProjectMetadata(metadata_filename)
-    new_version = get_next_version(metadata.version)
-
-    main_resource_file = 'resources\\' + metadata.name + '.rc'
+    main_resource_file = 'resources\\' + project.name + '.rc'
     if not os.path.isfile(main_resource_file):
-        main_resource_file = metadata.name + '.rc'
+        main_resource_file = project.name + '.rc'
 
+    logging.info('Atualizando versão do projeto {} para {}'.format(project.name, new_version))
 
-    logging.info('Atualizando versão do projeto {} para {}'.format(metadata.project_name, new_version))
-
-    resource_filename = os.path.join(project_path, main_resource_file)
+    resource_filename = main_resource_file
     if os.path.isfile(resource_filename):
        resource = ResourceFile(resource_filename)
        resource.update_version(new_version)
 
-    if os.path.isfile(metadata.name + '.dof'):
-        dof_file = DOFFile(metadata.name + '.dof')
-        dof_file.update_version(new_version)
-
-    metadata.update_version(new_version)
+    project.update_version(new_version)
 
     if os.path.isfile('Makefile'):
         update_makefile_version(new_version)
 
 
 if __name__=="__main__":
-    import sys
-    bump_version(sys.argv[1])
+    bump_version()

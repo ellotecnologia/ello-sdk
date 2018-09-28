@@ -17,21 +17,25 @@ class ResourceFile:
         self.filename = os.path.join(resource_path, resource_file)
 
     def update_version(self, version):
-        comma_version = ','.join(version.split('.'))
+        version_split = version.split('.')
+        if len(version_split) < 4:
+            version_split.append('0')
+        dot_version = '.'.join(version_split)
+        comma_version = ','.join(version_split)
+
         for line in fileinput.input(self.filename, inplace=True):
-            line = line.rstrip()
+            line = line.decode('utf8').rstrip()
             if 'FILEVERSION' in line:
-                print('FILEVERSION {}'.format(comma_version))
+                line = 'FILEVERSION {}'.format(comma_version)
             elif 'PRODUCTVERSION' in line:
-                print('PRODUCTVERSION {}'.format(comma_version))
+                line = 'PRODUCTVERSION {}'.format(comma_version)
             elif 'VALUE "FileVersion"' in line:
                 header, _ = line.split(',')
-                print('{}, "{}\\0"'.format(header, version))
+                line = '{}, "{}\\0"'.format(header, dot_version)
             elif 'VALUE "ProductVersion"' in line:
                 header, _ = line.split(',')
-                print('{}, "{}\\0"'.format(header, version))
-            else:
-                print(line)
+                line = '{}, "{}\\0"'.format(header, dot_version)
+            print(line.encode('utf8'))
 
 
 def compile_resources(resource_list):

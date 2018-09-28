@@ -13,8 +13,11 @@ class DOFFile(object):
         self.config = CustomConfigParser()
         self.config.read(self.filename)
 
-    def update_version(self, new_version):
-        self.version = new_version
+    def update_version(self, version):
+        version_split = version.split('.')
+        if len(version_split) < 4:
+            version_split.append('0')
+        self.version = '.'.join(version_split)
 
     @property
     def version(self):

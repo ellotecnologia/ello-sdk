@@ -83,7 +83,7 @@ def main():
     elif command == 'workon':
         inicia_chamado(args.numero_chamado)
     elif command == 'bump-version':
-        bump_version(args.project_path)
+        bump_version()
     elif command == 'make-changelog':
         make_changelog(ProjectMetadata())
     elif command == 'notify-team':
