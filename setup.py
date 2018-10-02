@@ -4,7 +4,7 @@ description = 'Ello SDK'
 
 setup(
     name='Ello SDK',
-    version='0.0.4',
+    version='0.0.5',
     author='Clayton A. Alves',
     author_email='clayton.aa@gmail.com',
     license='MIT',
@@ -23,7 +23,7 @@ setup(
         'future==0.16.0',
         'configparser'
     ],
-    dependency_links=['git@github.com:kynan/dokuwikixmlrpc.git@0a01d6af2c8ff26acccbd1826b0c5ac9ca28a6a1'],
+    dependency_links=['git@github.com/kynan/dokuwikixmlrpc.git@0a01d6af2c8ff26acccbd1826b0c5ac9ca28a6a1'],
     entry_points={
         'console_scripts': [
             'ell=ello.cli.ell:main',
