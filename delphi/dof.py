@@ -4,7 +4,7 @@ import fileinput
 import re
 import os.path
 
-from custom_config_parser import CustomConfigParser
+from .custom_config_parser import CustomConfigParser
 
 class DOFFile(object):
     

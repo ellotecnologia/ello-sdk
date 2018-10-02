@@ -1,8 +1,10 @@
-#coding: utf8
+# encoding: utf8
+from __future__ import unicode_literals
+
 import sys
 import re
 import logging
-from StringIO import StringIO
+from io import StringIO
 
 import dokuwikixmlrpc
 
@@ -21,7 +23,7 @@ def atualiza_pagina_downloads(wiki, versao):
     versao  = '.'.join(versao.split('.')[0:3])
     executavel = "Ello-{0}.{1}-compactado.exe".format(versao, build)
 
-    new_page = ur'''
+    new_page = r'''
 ~~NOTOC~~
 
 ====== Downloads ======
@@ -48,9 +50,9 @@ def atualiza_changelog(wiki, project_name):
 def create_page_contents(project_name):
     ticket_link = "[[http://os.ellotecnologia.net.br/chamados/\\1|#\\1]]"
     contents = StringIO()
-    print >>contents, u'~~NOTOC~~'
-    print >>contents, u'====== Registro de Atualizações - {0} ======'.format(project_name)
-    print >>contents, u'\\\\'
+    contents.write('~~NOTOC~~\n\n')
+    contents.write('====== Registro de Atualizações - {0} ======\n\n'.format(project_name))
+    contents.write('\\\\\n\n')
     with open('CHANGELOG.txt', 'r') as f:
         for line in f:
             line = line.decode('latin1')

@@ -1,9 +1,9 @@
-import ConfigParser
+import configparser
 
-class CustomConfigParser(ConfigParser.ConfigParser):
+class CustomConfigParser(configparser.ConfigParser):
 
     def __init__(self):
-        ConfigParser.ConfigParser.__init__(self)
+        configparser.ConfigParser.__init__(self)
         self.optionxform = str
 
     def write(self, fp):

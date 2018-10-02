@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import os
 
-from metadata import ProjectMetadata
+from .metadata import ProjectMetadata
 
 PACKAGE_FILE = 'package.json'
 

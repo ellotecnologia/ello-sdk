@@ -1,6 +1,6 @@
 #coding: utf8
 import os
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 user_folder = os.path.expanduser("~")
 config_filename = "{}\\ello-builder.ini".format(user_folder)

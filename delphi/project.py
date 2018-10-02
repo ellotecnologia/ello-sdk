@@ -1,7 +1,7 @@
 # encoding: utf8
 import logging
 
-from dof import DOFFile
+from .dof import DOFFile
 
 
 class Project(object):

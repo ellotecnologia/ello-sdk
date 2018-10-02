@@ -10,7 +10,7 @@ import re
 import logging
 from datetime import datetime
 
-import git
+import ello.sdk.git as git
 
 logger = logging.getLogger()
 

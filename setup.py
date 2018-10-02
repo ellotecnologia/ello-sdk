@@ -12,7 +12,7 @@ setup(
     description=description,
     install_requires = [
         'fdb==1.8',
-        'dokuwikixmlrpc==2010-07-19',
+        'dokuwikixmlrpc',
         'requests',
         'telepot==12.5',
         'colorama==0.3.9',
@@ -20,8 +20,10 @@ setup(
         'sqlparse==0.2.4',
         'Pygments==2.2.0',
         'telepot==12.5',
-        'future==0.16.0'
+        'future==0.16.0',
+        'configparser'
     ],
+    dependency_links=['git@github.com:kynan/dokuwikixmlrpc.git@0a01d6af2c8ff26acccbd1826b0c5ac9ca28a6a1'],
     entry_points={
         'console_scripts': [
             'ell=ello.cli.ell:main',

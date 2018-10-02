@@ -6,8 +6,8 @@ import shlex
 import glob
 import re
 
-from resource import compile_resources
-from dof import export_cfg_file
+from .resource import compile_resources
+from .dof import export_cfg_file
 
 DEBUG_MODE = 'debug'
 RELEASE_MODE = 'release'
