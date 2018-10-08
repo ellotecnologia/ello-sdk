@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import configparser
 
 class CustomConfigParser(configparser.ConfigParser):
@@ -22,5 +24,5 @@ class CustomConfigParser(configparser.ConfigParser):
                     continue
                 if (value is not None) or (self._optcre == self.OPTCRE):
                     # This is the important departure from ConfigParser for what you are looking for
-                    key = "=".join((key, str(value).replace('\n', '\r\n\t')))
+                    key = "=".join((key, value.replace('\n', '\r\n\t')))
                 fp.write("%s\r\n" % (key))

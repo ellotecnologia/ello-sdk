@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import fileinput
 import re
 import os.path
+import codecs
 
 from .custom_config_parser import CustomConfigParser
 
@@ -11,7 +12,8 @@ class DOFFile(object):
     def __init__(self, filename):
         self.filename = filename
         self.config = CustomConfigParser()
-        self.config.read(self.filename)
+        with codecs.open(self.filename, 'r', encoding='latin1') as f:
+           self.config.read_file(f)
 
     def update_version(self, version):
         version_split = version.split('.')
@@ -82,8 +84,8 @@ class DOFFile(object):
         self.config.set(section, option, value)
 
     def save(self):
-        with open(self.filename, 'wb') as configfile:
-            self.config.write(configfile)
+        with codecs.open(self.filename, 'wb', encoding='latin1') as f:
+            self.config.write(f)
 
 
 def export_cfg_file(filename, mode, config):
