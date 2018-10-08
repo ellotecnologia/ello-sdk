@@ -17,7 +17,7 @@ def units_restantes(output_units, unit_names):
 def basic_delphi_units(unit_name):
     unit_list = ['windows', 'classes', 'sysutils', 'strutils', 'variants', 
                  'contnrs', 'fmtbcd', 'math', 'inifiles', 'wininet', 'dateutils',
-                 'typinfo', 'comobj']
+                 'typinfo', 'comobj', 'clipbrd']
     return unit_name.lower() in unit_list
 
 
@@ -64,12 +64,12 @@ def acbr_units(unit_name):
 
 
 def basic_units(unit_name):
-    unit_list = ['stringutils', 'udateutils', 'urecordlock', 'logging', 'umath']
+    unit_list = ['stringutils', 'udateutils', 'urecordlock', 'logging', 'umath', 'synacode', 'httpsend']
     return unit_name.lower() in unit_list
 
 
 def excellent_units(unit_name):
-    unit_list = ['ufirebird', 'uquerybuilder', 'uactiverecord', 'speedbuttonstacked']
+    unit_list = ['ufirebird', 'uquerybuilder', 'uactiverecord', 'speedbuttonstacked', 'labevelell']
     unit_name = unit_name.lower()
     return unit_name.startswith('ell') or \
            unit_name.startswith('exl') or \
