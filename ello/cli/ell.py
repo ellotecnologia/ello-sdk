@@ -11,6 +11,7 @@ from ello.sdk import config
 from ello.sdk.version import bump_version
 from ello.sdk.changelog import make_changelog
 from ello.sdk.wiki import update_wiki_pages
+from ello.sdk.test_utils import update_test_project
 from ello.chamados import inicia_chamado
 from ello.notifications import notify_team
 from ello.project import ProjectMetadata, init_project, require_dependency
@@ -66,8 +67,9 @@ def parse_args():
     cmd.add_parser("exporta-menus", help="Gera um script de menu conforme banco em uso")
     cmd.add_parser("exporta-programas", help="Gera um script dos programas cadastrados no banco de dados atual")
 
-    #build_cmd = cmd.add_parser("build", help=u"Faz o build do projeto")
-    #build_cmd.add_argument("build_mode", nargs='?')
+    p = cmd.add_parser("update-testproj", help="Atualiza as units de um projeto Delphi de testes usando como base outro projeto Delphi")
+    p.add_argument("test_dpr", nargs="?")
+    p.add_argument("reference_dpr", nargs="?")
 
     return parser.parse_args()
 
@@ -98,6 +100,8 @@ def main():
         exporta_menus()
     elif command == 'exporta-programas':
         exporta_programas()
+    elif command == 'update-testproj':
+        update_test_project(args.test_dpr, args.reference_dpr)
 
 
 if __name__ == "__main__":
