@@ -72,7 +72,8 @@ def apply_some_fixups(text):
 
     # Corrige algumas manias de todo programador
     text = re.sub('(na|no) grid', 'na grade', text, flags=re.I)
-    text = re.sub('no form', 'na tela', text, flags=re.I)
+    text = re.sub('no form ', 'na tela ', text, flags=re.I)
+    text = re.sub('o form ', 'a tela ', text, flags=re.I)
     text = re.sub('melhor(ei|ia|ado) (o|a|no|na|para)', 'Aprimoramento \\2', text, flags=re.I)
     text = re.sub('melhoria', 'Aprimoramento', text, flags=re.I)
     text = re.sub('aprimoramento a', 'Aprimoramento na', text, flags=re.I)
