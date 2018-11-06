@@ -28,8 +28,21 @@ class TextManipulationTests(unittest.TestCase):
         self.assertEqual(expected_text, apply_some_fixups(original_text))
         
     def test_ignore_line(self):
-        self.assertTrue(ignore_line("Revisão no processo de xxx"))
         self.assertFalse(ignore_line("Melhoria no processo de xxx"))
+
+        self.assertTrue(ignore_line("Revisão no processo de xxx"), 'Deve ignorar a palavra revisão')
+        self.assertTrue(ignore_line("Criado frame de Farmácia Popular no cadastro do produto"), 'Deve ignorar a palavra frame')
+        self.assertTrue(ignore_line("Atualização nos metadados do projeto"))
+        self.assertTrue(ignore_line("Atualização no metadado do projeto"))
+        self.assertTrue(ignore_line("Removido dataset não mais utilizado"))
+        self.assertTrue(ignore_line("Removido ClientDataset não mais utilizado"))
+        self.assertTrue(ignore_line("Movi componentes relacionados ao princípio ativo para um frame isolado"))
+        self.assertTrue(ignore_line('Revert "Correção na gravação da data do lote (#9312)"'))
+        self.assertTrue(ignore_line("Limpeza das units"))
+        self.assertTrue(ignore_line("Correção para adicionar script no arquivo de resources"))
+        self.assertTrue(ignore_line("Renomeada variável xxx"))
+        self.assertTrue(ignore_line("Renomeado variável xxx"))
+        self.assertTrue(ignore_line("Renomeei variável xxx"))
         
 
 if __name__ == "__main__":
