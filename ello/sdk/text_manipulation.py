@@ -111,6 +111,10 @@ def ignore_line(text):
     technical_terms.append('changelog')
     technical_terms.append('projeto(s)* de teste')
     
+    technical_terms.append(r'\bdebug\b')
+    technical_terms.append(r'\bsource\b')
+    technical_terms.append(r'\bpath\b')
+
     technical_terms.append(r'thread(s)*')
     technical_terms.append(r'\bunit(s)*\b')
     technical_terms.append(r'\buse(s)*\b')
