@@ -2,7 +2,11 @@
 from __future__ import unicode_literals
 
 import unittest
-from ello.sdk.text_manipulation import apply_some_fixups, ignore_line
+from ello.sdk.text_manipulation import (
+    apply_some_fixups, 
+    ignore_line,
+    preprocess_commit_messages
+)
 
 class TextManipulationTests(unittest.TestCase):
 
@@ -43,6 +47,21 @@ class TextManipulationTests(unittest.TestCase):
         self.assertTrue(ignore_line("Renomeada variável xxx"))
         self.assertTrue(ignore_line("Renomeado variável xxx"))
         self.assertTrue(ignore_line("Renomeei variável xxx"))
+    
+    def test_message_removal(self):
+        messages = [
+            '- Mensagem commit 01 (#9312) <Bruno>', 
+            '- Mensagem commit 02 <Clayton>', 
+            '- Esta mensagem não pode ir* <Clayton>', 
+            '- Mensagem commit 04 <Clayton>', 
+            '- Esta também não* <Clayton>', 
+            '- Outro teste <Clayton>'
+        ]
+        expected_messages = [
+            '- Outro teste <Clayton>'
+        ]
+        messages = preprocess_commit_messages(messages)
+        self.assertEqual(expected_messages, messages)
         
 
 if __name__ == "__main__":

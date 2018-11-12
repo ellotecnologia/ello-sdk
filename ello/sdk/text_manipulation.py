@@ -5,6 +5,7 @@ from __future__ import print_function
 import re
 
 def preprocess_commit_messages(messages):
+    messages = filter(remove_marked_messages, messages)
     messages = map(remove_unnecessary_characters, messages)
     messages = map(lambda text: re.sub('^(.+) - (.+) (<\w+>)$', '\\2 (\\1) \\3', text, flags=re.I), messages)
     messages = map(translate_personal_verbs, messages)
@@ -14,6 +15,10 @@ def preprocess_commit_messages(messages):
     messages = map(lambda text: '- ' + text, messages)
     return messages
 
+
+def remove_marked_messages(text):
+    """ Ignorar mensagens de commit que contenham '*' no final """
+    return not re.search(r'\* <\w+>$', text)
 
 def remove_unnecessary_characters(text):
     """
