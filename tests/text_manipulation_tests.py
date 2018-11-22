@@ -67,6 +67,18 @@ class TextManipulationTests(unittest.TestCase):
         messages = preprocess_commit_messages(messages)
         self.assertEqual(expected_messages, messages)
         
+    def test_message_preprocessing(self):
+        self.maxDiff = None
+        messages = [
+            '- nova correção na atualização do saldo do colaborador <Triburtini>', 
+            '- -Ajustes na tela de cheques para não deixar editar cheques que nao sejam incluidos manualmente -criado scripts para ajustes em lançamentos financeiros orfãos -corrigido erro de não excluir lancamentos do contas a pagar no cancelamento de despesas feito pela registradora <Triburtini>'
+        ]
+        expected_messages = [
+            '- Aprimoramento na tela de cheques para não deixar editar cheques que nao sejam incluidos manualmente -criado scripts para ajustes em lançamentos fi... <Triburtini>',
+            '- Correção na atualização do saldo do colaborador <Triburtini>'
+        ]
+        messages = preprocess_commit_messages(messages)
+        self.assertEqual(expected_messages, messages)
 
 if __name__ == "__main__":
     unittest.main()

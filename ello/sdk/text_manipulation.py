@@ -7,6 +7,7 @@ import re
 def preprocess_commit_messages(messages):
     messages = filter(remove_marked_messages, messages)
     messages = map(remove_unnecessary_characters, messages)
+    messages = map(crop_message, messages)
     messages = map(lambda text: re.sub('^(.+) - (.+) (<\w+>)$', '\\2 (\\1) \\3', text, flags=re.I), messages)
     messages = map(translate_personal_verbs, messages)
     messages = map(apply_some_fixups, messages)
@@ -16,9 +17,19 @@ def preprocess_commit_messages(messages):
     return messages
 
 
+def crop_message(text):
+    """ Mensagem do commit tem que caber em um tweet (140 caracteres) """
+    m = re.search('(.+) (<\w+>)', text)
+    message, author = m.groups()
+    if len(message) > 140:
+        message = message[:140] + '...'
+    return '{} {}'.format(message, author)
+
+
 def remove_marked_messages(text):
     """ Ignorar mensagens de commit que contenham '*' no final """
     return not re.search(r'\* <\w+>$', text)
+
 
 def remove_unnecessary_characters(text):
     """
@@ -27,7 +38,7 @@ def remove_unnecessary_characters(text):
     """
     text = text.strip()
     text = re.sub('\.$', '', text)
-    text = re.sub('^[^\w]', '', text)
+    text = re.sub('^[^\w]+', '', text)
     text = re.sub('^[\d]', '', text)
     text = text.strip()
     return text
@@ -70,7 +81,7 @@ def apply_some_fixups(text):
     text = re.sub('pequen(o|a) (ajust.|corre..o|mudan.a)', 'Correção', text, flags=re.I)
     text = re.sub('nov(o|a) (ajust.|corre..o|mudan.a)', 'Correção', text, flags=re.I)
     text = re.sub('um correção', 'uma correção', text, flags=re.I)
-    text = re.sub('ajust(e|ei|ado) (no|na|para)', 'Aprimoramento \\2', text, flags=re.I)
+    text = re.sub('ajust(e|es|ei|ado) (no|na|para)', 'Aprimoramento \\2', text, flags=re.I)
     text = re.sub('refatur(ar|ei|ado)', 'refator\\1', text, flags=re.I)
     text = re.sub('program(ei|ado) para', 'Aprimoramento para', text, flags=re.I)
     text = re.sub('modifi(quei|cado) para', 'Aprimoramento para', text, flags=re.I)
