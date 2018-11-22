@@ -68,6 +68,7 @@ def apply_some_fixups(text):
     
     # Corrige algumas manias do Paulinho
     text = re.sub('pequen(o|a) (ajust.|corre..o|mudan.a)', 'Correção', text, flags=re.I)
+    text = re.sub('nov(o|a) (ajust.|corre..o|mudan.a)', 'Correção', text, flags=re.I)
     text = re.sub('um correção', 'uma correção', text, flags=re.I)
     text = re.sub('ajust(e|ei|ado) (no|na|para)', 'Aprimoramento \\2', text, flags=re.I)
     text = re.sub('refatur(ar|ei|ado)', 'refator\\1', text, flags=re.I)

@@ -31,6 +31,10 @@ class TextManipulationTests(unittest.TestCase):
         expected_text = "Aprimoramento no processo de emissão de notas"
         self.assertEqual(expected_text, apply_some_fixups(original_text))
         
+        original_text = "nova correção na atualização do saldo do colaborador"
+        expected_text = "Correção na atualização do saldo do colaborador"
+        self.assertEqual(expected_text, apply_some_fixups(original_text))
+        
     def test_ignore_line(self):
         self.assertFalse(ignore_line("Melhoria no processo de xxx"))
 
