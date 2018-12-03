@@ -19,6 +19,11 @@ class TextManipulationTests(unittest.TestCase):
         expected_text = "Correção no recurso X"
         self.assertEqual(expected_text, apply_some_fixups(original_text))
         
+        original_text = "Pequenas correções para fazer xxx com yyy"
+        expected_text = "Correção para fazer xxx com yyy"
+        self.assertEqual(expected_text, apply_some_fixups(original_text))
+        
+
         original_text = "Atualizei o form de clientes com novos recursos"
         expected_text = "Atualizei a tela de clientes com novos recursos"
         self.assertEqual(expected_text, apply_some_fixups(original_text))

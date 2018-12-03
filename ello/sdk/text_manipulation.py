@@ -78,14 +78,14 @@ def apply_some_fixups(text):
     text = re.sub('(\w|\d)\(#', '\\1 (#', text)
     
     # Corrige algumas manias do Paulinho
-    text = re.sub('pequen(o|a) (ajust.|corre..o|mudan.a)', 'Correção', text, flags=re.I)
+    text = re.sub('pequen(o|a|os|as) (ajust.|corre..o|corre..es|mudan.a)', 'Correção', text, flags=re.I)
     text = re.sub('nov(o|a) (ajust.|corre..o|mudan.a)', 'Correção', text, flags=re.I)
     text = re.sub('um correção', 'uma correção', text, flags=re.I)
-    text = re.sub('ajust(e|es|ei|ado) (no|na|para)', 'Aprimoramento \\2', text, flags=re.I)
+    text = re.sub('^ajust(e|es|ei|ado) (no|na|para)', 'Aprimoramento \\2', text, flags=re.I)
     text = re.sub('refatur(ar|ei|ado)', 'refator\\1', text, flags=re.I)
     text = re.sub('program(ei|ado) para', 'Aprimoramento para', text, flags=re.I)
-    text = re.sub('modifi(quei|cado) para', 'Aprimoramento para', text, flags=re.I)
-    text = re.sub('implement(ei|ado) para', 'Aprimoramento para', text, flags=re.I)
+    text = re.sub('^modifi(quei|cado) para', 'Aprimoramento para', text, flags=re.I)
+    text = re.sub('^implement(ei|ado) para', 'Aprimoramento para', text, flags=re.I)
 
     # Corrige algumas manias de todo programador
     text = re.sub('(na|no) grid', 'na grade', text, flags=re.I)
