@@ -1,6 +1,7 @@
 import threading
 import queue
 import fdb
+import argparse
 
 import colorama
 colorama.init()
@@ -59,7 +60,12 @@ def init_trace_thread():
     t.start()
 
 
-def main_loop():
+def save_to_file(filename, output):
+    with open(filename, 'a') as f:
+        f.write(output)
+
+
+def main_loop(args):
     statement_count = 0
     while True:
         try:
@@ -67,6 +73,10 @@ def main_loop():
         except queue.Empty:
             continue
         output = sqlparse.format(sql, reindent=True, keyword_case='upper')
+
+        if args.output_file:
+            save_to_file(args.output_file, output)
+
         output = highlight(output, lexer, formatter)
         print(output)
 
@@ -76,11 +86,18 @@ def main_loop():
         print('-- --------------------\n')
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-w', '--output-file', nargs='?', help="Nome do arquivo para gravar a saida")
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
     init_trace_thread()
     print('Firebird Trace iniciado\n')
     try:
-        main_loop()
+        main_loop(args)
     except KeyboardInterrupt:
         print('Firebird Trace finalizado')
 
