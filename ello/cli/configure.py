@@ -10,6 +10,11 @@ import subprocess
 import argparse
 import json
 import collections
+import logging
+
+from ello.sdk.git import git
+
+logger = logging.getLogger()
 
 PASTA_COMPONENTES = os.getenv('COMPONENTES')
 PASTA_PROJETO_ELLO = PASTA_COMPONENTES + "\\.." 
@@ -17,8 +22,7 @@ FNULL = open(os.devnull, 'w')
 
 
 def update_project_dependencies():
-    """ Update current project's dependencies to reflect package.json file
-    """
+    """ Update current project's dependencies to reflect package.json file """
     if os.path.isfile('package.json'):
         atualiza_dependencias_package_json()
     else:
@@ -26,7 +30,7 @@ def update_project_dependencies():
 
 
 def atualiza_dependencias_package_json():
-    print('Coletando metadados do projeto')
+    logger.info('Coletando metadados do projeto')
     with open('package.json', 'r') as json_file:
         package_info = json.load(json_file)
     dependencies = package_info['dependencies']
@@ -40,8 +44,7 @@ def atualiza_dependencias_package_json():
 
 
 def atualiza_dependencias_modo_retrocompatibilidade():
-    """ Modo de retrocompatibilidade para funcionar com revisões antigas
-    """
+    """ Modo de retrocompatibilidade para funcionar com revisões antigas """
     with open('LEIAME.txt', 'r') as arquivo_leiame:
         while True:
             linha = arquivo_leiame.readline()
@@ -67,8 +70,7 @@ def extrai_hash_do_pacote(arquivo):
 
 
 def freeze_dependencies():
-    """ Updates package.json file with the latest dependencies hashes
-    """
+    """ Updates package.json file with the latest dependencies hashes """
     with open('package.json', 'r') as f:
         package_info = json.load(f, object_pairs_hook=collections.OrderedDict)
 
@@ -84,8 +86,7 @@ def freeze_dependencies():
 
 
 def get_last_git_hash(repo_path):
-    """ Gets the last repo hash
-    """
+    """ Gets the last repo hash """
     curdir = os.getcwd()
     os.chdir(repo_path)
     command = 'git log -1 --pretty=format:%H'
@@ -97,24 +98,26 @@ def get_last_git_hash(repo_path):
 
 def checkout_pacote(nome_pacote, caminho, novo_hash):
     os.chdir("{0}/{1}".format(caminho, nome_pacote))
-    if not (copia_de_trabalho_limpa()):
-        print("Existem modificações não commitadas na pasta {0}\\{1}. Cancelando atualização.".format(caminho, nome_pacote))
+    if novo_hash == obtem_hash_atual():
+        logger.debug("Pacote {} já está na versão correta".format(nome_pacote))
         return
-    if novo_hash==obtem_hash_atual():
-        return
-    print('=> Atualizando {0} para a revisão {1}'.format(nome_pacote, novo_hash[0:7]))
-    command = 'git checkout {0}'.format(novo_hash).split()
-    return_code = subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT)
 
-    # Se der erro ao fazer o checkout da revisão, tenta fazer um fetch e fazer o checkout novamente
-    if return_code!=0:
-        baixa_atualizacoes_do_repositorio(nome_pacote)
-        subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT)
+    if not copia_de_trabalho_limpa():
+        logger.info("Existem modificações não commitadas na pasta {0}\\{1}. Cancelando atualização.".format(caminho, nome_pacote))
+        return
+
+    logger.info('Atualizando {0} para a revisão {1}'.format(nome_pacote, novo_hash[0:7]))
+    exit_code = git('checkout {0}'.format(novo_hash))
+    if exit_code == 0:
+        return
+
+    logger.info("Baixando atualizações do repositório {0}".format(nome_pacote))
+    git('fetch')
+    git('checkout {}'.format(novo_hash))
 
 
 def obtem_hash_atual():
-    """ Obtem o hash do último commit no repositório atual
-    """
+    """ Obtem o hash do último commit no repositório atual """
     command = 'git log -1 --pretty="%H"'
     git = subprocess.Popen(command, stdout=subprocess.PIPE)
     return unicode(git.communicate()[0].strip())
@@ -125,13 +128,9 @@ def copia_de_trabalho_limpa():
     return return_code==0
 
 
-def baixa_atualizacoes_do_repositorio(nome_pacote):
-    print("Fazendo fetch do repositorio {0}".format(nome_pacote))
-    subprocess.call('git fetch', stdout=FNULL, stderr=subprocess.STDOUT)
-
-
 def main():
-    parser = argparse.ArgumentParser(description='Ferramenta de gerenciamento de dependencias de pacotes Ello')
+    logging.basicConfig(format='=> %(message)s', level=logging.INFO)
+    parser = argparse.ArgumentParser(description='Gerenciador de dependencias de pacotes Ello')
     parser.add_argument('--save', action="store_true", default=False)
     args = parser.parse_args()
 
@@ -141,5 +140,5 @@ def main():
         update_project_dependencies()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()

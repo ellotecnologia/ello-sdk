@@ -10,8 +10,10 @@ logger = logging.getLogger()
 
 
 def git(args):
+    cmd = 'git {0}'.format(args).encode('latin-1')
     with open(os.devnull, 'w') as FNULL:
-        subprocess.call('git {0}'.format(args).encode('latin-1'), stdout=FNULL, stderr=subprocess.STDOUT)
+        exit_code = subprocess.call(cmd, stdout=FNULL, stderr=subprocess.STDOUT)
+    return exit_code
 
 
 def create_version_tag(tag_name):
