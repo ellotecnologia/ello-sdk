@@ -34,22 +34,33 @@ def bump_version():
     project = ProjectMetadata(metadata_filename)
     new_version = get_next_version(project.version)
 
-    main_resource_file = 'resources\\' + project.name + '.rc'
-    if not os.path.isfile(main_resource_file):
-        main_resource_file = project.name + '.rc'
-
     logging.info('Atualizando versão do projeto {} para {}'.format(project.name, new_version))
 
-    resource_filename = main_resource_file
-    if os.path.isfile(resource_filename):
-       resource = ResourceFile(resource_filename)
+    # Incrementa a versão do resource file caso houver algum na raiz do projeto
+    resource_file = project.name + '.rc'
+    if os.path.isfile(resource_file):
+       resource = ResourceFile(resource_file)
        resource.update_version(new_version)
 
+    # Incrementa a versão do resource file caso houver algum na pasta 'res'
+    resource_file = 'res\\' + project.name + '.rc'
+    if os.path.isfile(resource_file):
+       resource = ResourceFile(resource_file)
+       resource.update_version(new_version)
+
+    # Incrementa a versão do resource file caso houver algum na pasta 'resources'
+    resource_file = 'resources\\' + project.name + '.rc'
+    if os.path.isfile(resource_file):
+       resource = ResourceFile(resource_file)
+       resource.update_version(new_version)
+
+    # Incrementa versão do arquivo DOF do projeto delphi
     project.update_version(new_version)
 
+    # Incrementa a versão no Makefile
     if os.path.isfile('Makefile'):
         update_makefile_version(new_version)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     bump_version()
