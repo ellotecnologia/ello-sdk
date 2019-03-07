@@ -7,6 +7,7 @@ import re
 def preprocess_commit_messages(messages):
     messages = filter(remove_marked_messages, messages)
     messages = map(remove_unnecessary_characters, messages)
+    messages = map(remove_issue_number, messages)
     messages = map(crop_message, messages)
     messages = map(lambda text: re.sub('^(.+) - (.+) (<\w+>)$', '\\2 (\\1) \\3', text, flags=re.I), messages)
     messages = map(translate_personal_verbs, messages)
@@ -20,15 +21,31 @@ def preprocess_commit_messages(messages):
 def crop_message(text):
     """ Mensagem do commit tem que caber em um tweet (140 caracteres) """
     m = re.search('(.+) (<\w+>)', text)
-    message, author = m.groups()
+    if m:
+        message, author = m.groups()
+    else:
+        message, author = text, ""
     if len(message) > 140:
         message = message[:140] + '...'
-    return '{} {}'.format(message, author)
+    return '{} {}'.format(message, author).strip()
 
 
 def remove_marked_messages(text):
     """ Ignorar mensagens de commit que contenham '*' no final """
     return not re.search(r'\* <\w+>$', text)
+
+
+def remove_issue_number(text):
+    """
+    Remove trechos com instruções de resolução de issue, como as usadas no gitlab/github/bitbucket
+    """
+    m = re.search('(.+) (<\w+>)', text)
+    if m:
+        text, author = m.groups()
+    else:
+        text, author = text, ""
+    text = re.sub('\s*\(\s*(resolve|resolves|fix)\s+#\d+\s*\)\s*', '', text)
+    return '{} {}'.format(text, author).strip()
 
 
 def remove_unnecessary_characters(text):

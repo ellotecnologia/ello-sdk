@@ -85,5 +85,29 @@ class TextManipulationTests(unittest.TestCase):
         messages = preprocess_commit_messages(messages)
         self.assertEqual(expected_messages, messages)
 
+    def test_remove_issue_number(self):
+        # Quando a mensagem do commit contiver algum verbo de resolução de issue (ex: resolve #1234)
+        # este trecho deverá ser removido da mensagem do changelog para não aparecer no changelog do wiki
+        messages = [
+            "- Implementado recurso X (resolve #1234)",
+            "- Implementado recurso X ( resolve  #1234  )",
+            "- Implementado recurso X (#1234) ( resolve  #1234  )",
+            "- Implementado recurso X ( resolve  #1234  ) (#1234)",
+            "- Implementado recurso X (resolve #1234) <Clayton>",
+            "- Implementado recurso X (resolve #1234) (#1234) <Clayton>",
+            "- Implementado recurso X (#1234) (resolve #1234) <Clayton>",
+        ]
+        expected = [
+            "- Implementado recurso X",
+            "- Implementado recurso X",
+            "- Implementado recurso X (#1234)",
+            "- Implementado recurso X (#1234)",
+            "- Implementado recurso X <Clayton>",
+            "- Implementado recurso X (#1234) <Clayton>",
+            "- Implementado recurso X (#1234) <Clayton>",
+        ]
+        self.assertEqual(expected, preprocess_commit_messages(messages))
+
+
 if __name__ == "__main__":
     unittest.main()
