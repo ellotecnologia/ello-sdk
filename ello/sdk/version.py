@@ -28,12 +28,17 @@ def update_makefile_version(new_version):
             sys.stdout.write(line)
 
 
-def bump_version():
+def bump_version(args):
     """ Incrementa a versão do projeto """
-    metadata_filename = 'package.json'
-    project = ProjectMetadata(metadata_filename)
-    new_version = get_next_version(project.version)
-
+    project = ProjectMetadata('package.json')
+    args.version = get_next_version(project.version)
+    set_version(args)
+    
+def set_version(args):
+    """ Define a versao do projeto """
+    project = ProjectMetadata('package.json')
+    new_version = args.version
+    
     logging.info('Atualizando versão do projeto {} para {}'.format(project.name, new_version))
 
     # Incrementa a versão do resource file caso houver algum na raiz do projeto
@@ -60,7 +65,3 @@ def bump_version():
     # Incrementa a versão no Makefile
     if os.path.isfile('Makefile'):
         update_makefile_version(new_version)
-
-
-if __name__ == "__main__":
-    bump_version()

@@ -11,7 +11,7 @@ PACKAGE_FILE = 'package.json'
 PACKAGE_TEMPLATE = """\
 {{
   "name": "{}", 
-  "version": "0.1", 
+  "version": "0.0.1", 
   "dependencies": {{
   }}, 
   "repos": {{
@@ -20,18 +20,21 @@ PACKAGE_TEMPLATE = """\
 """
 
 
-def init_project():
+def init_project(args):
     """ Inicializa um projeto.
         Cria o arquivo package.json para controlar as 
         dependências e configurações do projeto
     """
     if os.path.isfile(PACKAGE_FILE):
-        print('Projeto já inicializado')
         return
-    nome_projeto = os.path.basename(os.getcwd())
+
+    project_name = os.path.basename(os.getcwd())
+    if args.name:
+        project_name = args.name
+
     with open(PACKAGE_FILE, 'w') as f:
-        f.write(PACKAGE_TEMPLATE.format(nome_projeto))
-    print('Projeto {} inicializado'.format(nome_projeto))
+        f.write(PACKAGE_TEMPLATE.format(project_name))
+    print('Projeto {} inicializado'.format(project_name))
 
 
 def require_dependency():

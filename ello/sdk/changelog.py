@@ -12,6 +12,7 @@ from datetime import datetime
 
 from .git import git, get_changes_from, create_version_tag, push_tags
 from .text_manipulation import preprocess_commit_messages
+from ello.project import ProjectMetadata
 
 logger = logging.getLogger()
 
@@ -19,7 +20,9 @@ CHANGELOG_FILE = 'CHANGELOG.txt'
 TMP_CHANGELOG_FILE = os.environ.get('TEMP') + '\\ell_changelog.tmp'
 
 
-def make_changelog(metadata):
+def make_changelog(args):
+    metadata = ProjectMetadata()
+    
     logger.info("Atualizando CHANGELOG.txt")
 
     if not os.path.isfile(CHANGELOG_FILE):
@@ -37,7 +40,9 @@ def make_changelog(metadata):
     # Atualiza informações no repositório
     commit_changelog(new_version)
     create_version_tag(new_version)
-    push_tags()
+    
+    if not args.no_push:
+        push_tags()
 
 
 def commit_changelog(version):
@@ -79,7 +84,3 @@ def merge_temp_with_changelog():
 def touch_file(fname):
     with open(fname, 'a'):
         os.utime(fname, None)
-
-
-if __name__=='__main__':
-    pass

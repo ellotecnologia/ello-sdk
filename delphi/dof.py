@@ -1,3 +1,4 @@
+# encoding: utf8
 from __future__ import unicode_literals
 
 import fileinput
@@ -101,6 +102,20 @@ def export_cfg_file(filename, mode, config):
     }
     with open(filename, 'w') as f:
         f.write(cfg_template.format(**config))
+
+
+def clear_dof_history(dof_file):
+    """ Remove as seções de histórico do arquivo .dof """
+    config = CustomConfigParser()
+    config.read(dof_file)
+    config.remove_section('HistoryLists\hlConditionals')
+    config.remove_section('HistoryLists\hlUnitAliases')
+    config.remove_section('HistoryLists\hlSearchPath')
+    config.remove_section('HistoryLists\hlSearchPath')
+    config.remove_section('HistoryLists\hlUnitOutputDirectory')
+    config.remove_section('HistoryLists\hlOutputDirectorry')
+    config.remove_section('HistoryLists\hlDebugSourcePath')
+    config.write(open(dof_file, 'wb'))
 
 
 def main():

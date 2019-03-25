@@ -5,6 +5,7 @@ from __future__ import print_function
 import os
 import subprocess
 import logging
+import shutil
 
 logger = logging.getLogger()
 
@@ -45,3 +46,14 @@ def get_changes_from(from_tag):
     changes = p.communicate()[0].splitlines()
     changes = map(lambda text: text.decode('utf8'), changes)
     return changes
+
+
+def install_hooks(args):
+    """ Instala alguns hooks no repositorio atual """
+    if not os.path.exists(".git"):
+        print("Repositório git não encontrado")
+        return
+    hooks_path = os.path.abspath(os.path.dirname(__file__) + "/../../git_hooks")
+    for root, dirs, files in os.walk(hooks_path):
+        for filename in files:
+            shutil.copyfile(os.path.join(hooks_path, filename), ".git/hooks/" + filename)

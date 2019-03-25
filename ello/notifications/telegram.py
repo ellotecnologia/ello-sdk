@@ -12,6 +12,7 @@ from ello.sdk import config
 logger = logging.getLogger()
 
 chat_id = '@ellotecnologia'
+#chat_id = '-211240257'  # Chat de testes
 WIKI_URL = 'http://wiki.ellotecnologia.net.br'
 
 
