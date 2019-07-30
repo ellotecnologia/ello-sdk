@@ -17,20 +17,21 @@ def units_restantes(output_units, unit_names):
 def basic_delphi_units(unit_name):
     unit_list = ['windows', 'classes', 'sysutils', 'strutils', 'variants', 
                  'contnrs', 'fmtbcd', 'math', 'inifiles', 'wininet', 'dateutils',
-                 'typinfo', 'comobj', 'clipbrd']
+                 'typinfo', 'comobj', 'clipbrd', 'system.ioutils', 'filectrl', 'printers',
+                 'winsock', 'types']
     return unit_name.lower() in unit_list
 
 
 def main_delphi_units(unit_name):
     unit_list = ['forms', 'messages', 'activex', 'mshtml', 'idcodermime', 'maskutils', 
-                 'shellapi', 'xpman', 'teengine', 'series', 'chart', 'teeprocs']
+                 'shellapi', 'xpman', 'teengine', 'series', 'chart', 'teeprocs', 'extdlgs']
     return unit_name.lower() in unit_list
 
 
 def gui_delphi_units(unit_name):
     unit_list = ['buttons', 'controls', 'comctrls', 'toolwin', 'dialogs', 'extctrls', 
                  'graphics', 'menus', 'stdctrls', 'pngimage', 'grids', 'dbgrids', 
-                 'pngspeedbutton', 'actnlist', 'pngbitbtn', 'imglist']
+                 'pngspeedbutton', 'actnlist', 'pngbitbtn', 'imglist', 'jpeg']
     return unit_name.lower() in unit_list
 
 
@@ -38,6 +39,10 @@ def database_delphi_units(unit_name):
     unit_list = ['db', 'dbclient', 'dbctrls', 'provider', 'sqlexpr', 'ibevents', 
                  'ibdatabase', 'dbxpress', 'ibcustomdataset', 'ibquery']
     return unit_name.lower() in unit_list
+
+
+def dunit_units(unit_name):
+    return unit_name.startswith('Test')
 
 
 def indy_units(unit_name):
@@ -60,7 +65,7 @@ def jcl_units(unit_name):
 
 def acbr_units(unit_name):
     unit_name = unit_name.lower()
-    return (unit_name.startswith('acbr')) or (unit_name.startswith('pcn'))
+    return (unit_name.startswith('acbr')) or (unit_name.startswith('pcn')) or (unit_name.startswith('pnfs'))
 
 
 def basic_units(unit_name):
@@ -110,6 +115,7 @@ def sort_unit_names(unit_names):
     units.extend(filter(main_delphi_units, unit_names))
     units.extend(filter(gui_delphi_units, unit_names))
     units.extend(filter(database_delphi_units, unit_names))
+    units.extend(filter(dunit_units, unit_names))
     units.extend(filter(indy_units, unit_names))
     units.extend(filter(devexpress_units, unit_names))
     units.extend(filter(basic_units, unit_names))
