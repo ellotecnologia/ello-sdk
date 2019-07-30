@@ -40,8 +40,13 @@ class TextManipulationTests(unittest.TestCase):
         expected_text = "Correção na atualização do saldo do colaborador"
         self.assertEqual(expected_text, apply_some_fixups(original_text))
         
+        original_text = "Lançamento á colaboradores ajustado para sugerir a descricao do lancamento de folha para 'SALARIO REFERENTE: XX/XXXX"
+        expected_text = "Lançamento á colaboradores modificado para sugerir a descricao do lancamento de folha para 'SALARIO REFERENTE: XX/XXXX"
+        self.assertEqual(expected_text, apply_some_fixups(original_text))
+        
     def test_ignore_line(self):
         self.assertFalse(ignore_line("Melhoria no processo de xxx"))
+        self.assertFalse(ignore_line("Aprimoramento na exibição de valores unitários quando o produto utiliza mais de duas casas decimais"))
 
         self.assertTrue(ignore_line("Revisão no processo de xxx"), 'Deve ignorar a palavra revisão')
         self.assertTrue(ignore_line("Criado frame de Farmácia Popular no cadastro do produto"), 'Deve ignorar a palavra frame')
@@ -51,11 +56,12 @@ class TextManipulationTests(unittest.TestCase):
         self.assertTrue(ignore_line("Removido ClientDataset não mais utilizado"))
         self.assertTrue(ignore_line("Movi componentes relacionados ao princípio ativo para um frame isolado"))
         self.assertTrue(ignore_line('Revert "Correção na gravação da data do lote (#9312)"'))
-        self.assertTrue(ignore_line("Limpeza das units"))
+        self.assertTrue(ignore_line("Limpeza das units"), "Deve ignorar a palavra units")
         self.assertTrue(ignore_line("Correção para adicionar script no arquivo de resources"))
         self.assertTrue(ignore_line("Renomeada variável xxx"))
         self.assertTrue(ignore_line("Renomeado variável xxx"))
         self.assertTrue(ignore_line("Renomeei variável xxx"))
+        self.assertTrue(ignore_line("Removi dependência do data Set e passei a manipular o Objeto FCartoes"))
     
     def test_message_removal(self):
         messages = [
