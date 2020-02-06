@@ -6,9 +6,9 @@ import re
 import logging
 from io import StringIO
 
-import dokuwikixmlrpc
+import dokuwiki
 
-import config
+from ello.sdk import config
 from ello.sdk import git
 
 logger = logging.getLogger()
@@ -42,10 +42,12 @@ def atualiza_pagina_downloads(wiki, versao):
         executavel=executavel)
     wiki.put_page('wiki:downloads', new_page, summary='', minor='')
 
+
 def atualiza_changelog(wiki, project_name):
     logger.info('Atualizando Changelog do projeto {0} no wiki...'.format(project_name))
     new_page = create_page_contents(project_name)
-    wiki.put_page('wiki:changelog:{0}'.format(project_name), new_page, summary='', minor='')
+    wiki.pages.set('wiki:changelog:{0}'.format(project_name), new_page, sum='', minor='')
+
 
 def create_page_contents(project_name):
     ticket_link = "[[http://os.ellotecnologia.net.br/chamados/\\1|#\\1]]"
@@ -53,9 +55,9 @@ def create_page_contents(project_name):
     contents.write('~~NOTOC~~\n\n')
     contents.write('====== Registro de Atualizações - {0} ======\n\n'.format(project_name))
     contents.write('\\\\\n\n')
-    with open('CHANGELOG.txt', 'r') as f:
+    with open('CHANGELOG.txt', 'r', encoding='latin1') as f:
         for line in f:
-            line = line.decode('latin1')
+            line = line
             line = re.sub('^-', '  *', line)
             line = re.sub('#(\d+)', ticket_link, line)
             contents.write(line)
@@ -63,20 +65,21 @@ def create_page_contents(project_name):
     contents.close()
     return result
 
+
 def update_wiki_pages(project_name):
     logger.info('Atualizando wiki...')
     try:
-        wiki = dokuwikixmlrpc.DokuWikiClient(WIKI_URL, config.wiki_user, config.wiki_password)
+        wiki = dokuwiki.DokuWiki(WIKI_URL, config.wiki_user, config.wiki_password)
     except:
-        logger.info('Erro ao atualizar o wiki!')
+        logger.info('Erro ao tentar logar no DokuWiki!')
         return
-    versao = '.'.join(git.get_latest_tag())
+    versao = git.get_latest_tag()
     try:
         #atualiza_pagina_downloads(wiki, versao)
         atualiza_changelog(wiki, project_name)
     except dokuwikixmlrpc.DokuWikiXMLRPCError:
         logger.info('Erro ao atualizar o wiki!')
 
+
 if __name__=="__main__":
     update_wiki_pages(sys.argv[1])
-

@@ -120,7 +120,7 @@ def obtem_hash_atual():
     """ Obtem o hash do último commit no repositório atual """
     command = 'git log -1 --pretty="%H"'
     git = subprocess.Popen(command, stdout=subprocess.PIPE)
-    return unicode(git.communicate()[0].strip())
+    return git.communicate()[0].strip().decode('latin1')
 
 
 def copia_de_trabalho_limpa():

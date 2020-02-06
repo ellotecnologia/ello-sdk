@@ -1,0 +1,4 @@
+from .compilation_error import CompilationError
+from .file_not_found_error import FileNotFoundError
+from .undeclared_identifier_error import UndeclaredIdentifierError
+from .identifier_redeclared_error import IdentifierRedeclaredError

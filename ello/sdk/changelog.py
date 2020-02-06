@@ -61,11 +61,11 @@ def get_previous_version(version):
 def generate_temp_changelog(version, changes):
     current_date = datetime.now().strftime("%d/%m/%Y")
     headline = "{} - Revisão {}\n".format(current_date, version)
-    with open(TMP_CHANGELOG_FILE, 'w') as f:
-        f.write(headline.encode('latin1'))
+    with open(TMP_CHANGELOG_FILE, 'w', encoding='latin1') as f:
+        f.write(headline)
         f.write("\n")
         for line in changes:
-            f.write(line.encode('latin1'))
+            f.write(line)
             f.write("\n")
         f.write("\n")
 

@@ -65,7 +65,11 @@ def jcl_units(unit_name):
 
 def acbr_units(unit_name):
     unit_name = unit_name.lower()
-    return (unit_name.startswith('acbr')) or (unit_name.startswith('pcn')) or (unit_name.startswith('pnfs'))
+    return (unit_name.startswith('acbr')) or \
+           (unit_name.startswith('pcn')) or \
+           (unit_name.startswith('pnfs')) or \
+           (unit_name.startswith('pcte')) or \
+           (unit_name.startswith('pmdfe'))
 
 
 def basic_units(unit_name):

@@ -5,7 +5,7 @@ import configparser
 class CustomConfigParser(configparser.ConfigParser):
 
     def __init__(self):
-        configparser.ConfigParser.__init__(self)
+        configparser.ConfigParser.__init__(self, delimiters=('=',))
         self.optionxform = str
 
     def write(self, fp):

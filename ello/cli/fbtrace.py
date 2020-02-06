@@ -31,14 +31,16 @@ def firebird_trace():
     <database>
         enabled	true
         log_statement_start	true
+        log_statement_finish true
         time_threshold 0
         print_plan true
-        print_perf false
+        print_perf true
         max_sql_length 8192
     </database>
     """
     trace_id = svc.trace_start(trace_config, 'test_trace_2')
     sql_statement = []
+    inside_statement = False
     while 1:
         try:
            line = svc._QS(fdb.ibase.isc_info_svc_line)
@@ -46,12 +48,24 @@ def firebird_trace():
            break
         if not line: # end of output
            break
-        if line.startswith('------'):
+        
+        #print '>>>>>>>', line
+        
+        if line.startswith('Statement'):
+            inside_statement = True
             sql_statement = []
             continue
-        if line.startswith('^^^^^^'):
+
+        if line.startswith('---------'):
+            continue
+
+        if line.startswith('^^^^^^') or ('EXECUTE_STATEMENT_FINISH' in line):
             q.put('\n'.join(sql_statement))
-        sql_statement.append(line.strip())
+            sql_statement = []
+            inside_statement = False
+
+        if inside_statement:
+            sql_statement.append(line.strip())
 
 
 def init_trace_thread():
@@ -63,6 +77,7 @@ def init_trace_thread():
 def save_to_file(filename, output):
     with open(filename, 'a') as f:
         f.write(output)
+        f.write("\n\n-- ---------------------------\n\n")
 
 
 def main_loop(args):

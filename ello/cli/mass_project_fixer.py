@@ -7,9 +7,12 @@ import subprocess
 import fileinput
 import re
 
-from delphi_utils.compilation_error import CompilationError
-from delphi_utils.undeclared_identifier_error import UndeclaredIdentifierError
-from delphi_utils.file_not_found_error import FileNotFoundError
+from delphi.errors import (
+    CompilationError,
+    UndeclaredIdentifierError,
+    IdentifierRedeclaredError,
+    FileNotFoundError
+)
 
 def try_to_compile_project(project_name):
     p = subprocess.Popen(['dcc32', '-q', project_name], stdout=subprocess.PIPE)
@@ -26,6 +29,8 @@ def extract_error(project_name, line):
         error = UndeclaredIdentifierError(project_name, line)
     elif 'File not found' in line:
         error = FileNotFoundError(project_name, line)
+    elif 'Identifier redeclared' in line:
+        error = IdentifierRedeclaredError(project_name, line)
     else:
         error = CompilationError(project_name, line)
     return error
@@ -45,3 +50,9 @@ def main(project_name):
 if __name__=="__main__":
     main(sys.argv[1])
 
+# Ideia
+# ell mass-fix 
+#   --add-implementation-unint=unit_name
+#   --add-interface-unit=unit_name
+#   --remove-implementation-unit=u
+#   --rename-unit=unit_name

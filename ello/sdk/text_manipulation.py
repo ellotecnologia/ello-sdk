@@ -1,8 +1,6 @@
 # encoding: utf8
-from __future__ import unicode_literals
-from __future__ import print_function
-
 import re
+import functools
 
 def preprocess_commit_messages(messages):
     messages = filter(remove_marked_messages, messages)
@@ -13,7 +11,7 @@ def preprocess_commit_messages(messages):
     messages = map(translate_personal_verbs, messages)
     messages = map(apply_some_fixups, messages)
     messages = filter(lambda x: not ignore_line(x), messages)
-    messages = sorted(messages, cmp=compara)
+    messages = sorted(messages, key=functools.cmp_to_key(compara))
     messages = map(lambda text: '- ' + text, messages)
     return messages
 
@@ -212,8 +210,8 @@ def compara(a, b):
         return -6
     if (b == 'corri'):
         return 6
-        
-    return cmp(a, b)
+
+    return (a > b) - (a < b) 
     
 
 if __name__=='__main__':

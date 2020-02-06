@@ -1,6 +1,6 @@
 import re
 
-from delphi_utils.compilation_error import CompilationError
+from .compilation_error import CompilationError
 
 identifier_location = {
     'iif': 'ExcellentUtils',

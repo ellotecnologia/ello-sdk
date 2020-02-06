@@ -3,7 +3,7 @@ import os
 import re
 import fileinput
 
-from delphi_utils.compilation_error import CompilationError
+from .compilation_error import CompilationError
 
 class UnitNotFound(Exception):
     pass

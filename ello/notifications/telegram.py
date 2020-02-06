@@ -27,8 +27,8 @@ def send_notification(project_name):
 
 def get_changelog_text():
     changelog = os.environ.get('TEMP') + '\\ell_changelog.tmp'
-    with open(changelog) as f:
-        text = f.read().decode('latin1')
+    with open(changelog, encoding='latin1') as f:
+        text = f.read()
     text = add_emojis(text)
     return text
 
@@ -51,8 +51,10 @@ def add_emojis(text):
 
 def send_message(mensagem):
     mensagem = mensagem.replace("_", "\\_")  # Se não substituir dispara telepot.exception.TelegramError
-    bot = telepot.Bot(config.telegram_token.encode('utf8'))
-    bot.sendMessage(chat_id.encode('utf8'), mensagem.encode('utf8'), parse_mode='Markdown')
+    #bot = telepot.Bot(config.telegram_token.encode('utf8'))
+    bot = telepot.Bot(config.telegram_token)
+    #bot.sendMessage(chat_id.encode('utf8'), mensagem.encode('utf8'), parse_mode='Markdown')
+    bot.sendMessage(chat_id, mensagem, parse_mode='Markdown')
 
 
 if __name__=="__main__":

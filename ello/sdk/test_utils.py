@@ -77,10 +77,10 @@ def update_test_project(test_project_file, tested_project_file):
                 inside_markers = False
                 for unit in units:
                     if not unit_overrided(unit, overrided_units):
-                        print '  ' + unit
+                        print('  ' + unit)
                 print("  // </TestedProjectUnits>")
         else:
-            print line,
+            print( line,)
 
 
 if __name__ == "__main__":

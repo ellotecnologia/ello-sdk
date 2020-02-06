@@ -3,7 +3,7 @@
 """
 import sys
 import logging
-import telegram
+from ello.notifications import telegram
 # import whatsapp
 # import skype
 # import facebook

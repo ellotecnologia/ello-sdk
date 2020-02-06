@@ -1,7 +1,3 @@
-# encoding: utf8
-from __future__ import unicode_literals
-from __future__ import print_function
-
 import os
 import subprocess
 import logging
@@ -11,7 +7,7 @@ logger = logging.getLogger()
 
 
 def git(args):
-    cmd = 'git {0}'.format(args).encode('latin-1')
+    cmd = 'git {0}'.format(args)
     with open(os.devnull, 'w') as FNULL:
         exit_code = subprocess.call(cmd, stdout=FNULL, stderr=subprocess.STDOUT)
     return exit_code
@@ -35,9 +31,9 @@ def get_latest_tag():
     p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     last_hash = p.communicate()[0].strip()
 
-    cmd = 'git describe --tags {}'.format(last_hash)
+    cmd = 'git describe --tags {}'.format(last_hash.decode('latin1'))
     p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-    return p.communicate()[0].strip()
+    return p.communicate()[0].strip().decode('latin1')
 
 
 def get_changes_from(from_tag):

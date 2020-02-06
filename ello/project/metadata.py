@@ -87,6 +87,12 @@ class ProjectMetadata:
 
     def __getattr__(self, name):
         return self._metadata[name]
+        
+    def dependencies(self):
+        for dep in self._metadata['dependencies'].keys():
+            hash = self._metadata['dependencies'][dep]
+            repo = self._metadata['repos'].get(dep, '')
+            yield dep, repo, hash
 
 
 if __name__ == "__main__":

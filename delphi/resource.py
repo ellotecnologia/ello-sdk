@@ -24,7 +24,7 @@ class ResourceFile:
         comma_version = ','.join(version_split)
 
         for line in fileinput.input(self.filename, inplace=True):
-            line = line.decode('utf8').rstrip()
+            line = line.rstrip()
             if 'FILEVERSION' in line:
                 line = 'FILEVERSION {}'.format(comma_version)
             elif 'PRODUCTVERSION' in line:
@@ -35,7 +35,7 @@ class ResourceFile:
             elif 'VALUE "ProductVersion"' in line:
                 header, _ = line.split(',')
                 line = '{}, "{}\\0"'.format(header, dot_version)
-            print(line.encode('utf8'))
+            print(line)
 
 
 def compile_resources(resource_list):

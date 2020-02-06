@@ -1,7 +1,7 @@
 # encoding: utf8
 from __future__ import unicode_literals, print_function
 
-import ConfigParser
+from configparser import ConfigParser
 import string
 import fdb
 
