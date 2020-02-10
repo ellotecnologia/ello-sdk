@@ -4,6 +4,7 @@ import functools
 
 def preprocess_commit_messages(messages):
     messages = filter(remove_marked_messages, messages)
+    messages = filter(lambda msg: not re.search('\s*wip\s*', msg, flags=re.I), messages)
     messages = map(remove_unnecessary_characters, messages)
     messages = map(remove_issue_number, messages)
     messages = map(crop_message, messages)
@@ -13,7 +14,7 @@ def preprocess_commit_messages(messages):
     messages = filter(lambda x: not ignore_line(x), messages)
     messages = sorted(messages, key=functools.cmp_to_key(compara))
     messages = map(lambda text: '- ' + text, messages)
-    return messages
+    return list(messages)
 
 
 def crop_message(text):

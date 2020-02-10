@@ -67,6 +67,7 @@ class TextManipulationTests(unittest.TestCase):
         messages = [
             '- Mensagem commit 01 (#9312) <Bruno>', 
             '- Mensagem commit 02 <Clayton>', 
+            '- wip',
             '- Esta mensagem não pode ir* <Clayton>', 
             '- Mensagem commit 04 <Clayton>', 
             '- Esta também não* <Clayton>', 
