@@ -3,8 +3,6 @@ import string
 import textwrap
 import re
 
-import pyperclip
-
 
 def units_restantes(output_units, unit_names):
     output = []
@@ -106,7 +104,7 @@ def extract_unit_names(data):
     lines = ''.join(lines)
     lines = lines.replace(';', '')
     unit_names = lines.split(',')
-    unit_names = map(string.strip, unit_names)
+    unit_names = map(str.strip, unit_names)
     return unit_names
 
 
@@ -148,18 +146,17 @@ def wrap_units_block(unit_names):
 
 
 def extract_and_sort_unit_block(data):
-    unit_names = extract_unit_names(data)
+    unit_names = list(extract_unit_names(data))
     unit_names = sort_unit_names(unit_names)
     return unit_names
 
 
 def main():
+    import pyperclip
     data = pyperclip.paste()
-
     unit_names = extract_and_sort_unit_block(data)
-
     output = wrap_units_block(unit_names)
-    pyperclip.copy(output.encode('latin1'))
+    pyperclip.copy(output)
 
 
 if __name__ == "__main__":
