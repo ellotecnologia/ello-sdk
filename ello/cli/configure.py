@@ -31,7 +31,7 @@ def update_project_dependencies():
 
 def atualiza_dependencias_package_json():
     logger.info('Coletando metadados do projeto')
-    with open('package.json', 'r') as json_file:
+    with open('package.json', 'r', encoding='utf8') as json_file:
         package_info = json.load(json_file)
     dependencies = package_info['dependencies']
     for dependency in dependencies:
@@ -71,17 +71,17 @@ def extrai_hash_do_pacote(arquivo):
 
 def freeze_dependencies():
     """ Updates package.json file with the latest dependencies hashes """
-    with open('package.json', 'r') as f:
+    with open('package.json', 'r', encoding='utf-8') as f:
         package_info = json.load(f, object_pairs_hook=collections.OrderedDict)
 
     dependencies = package_info['dependencies']
-    for package_name in dependencies.iterkeys():
+    for package_name in dependencies:
         package_path = PASTA_COMPONENTES
         if package_name.lower() == 'ello': # ello is not a package, it's a project
             package_path = PASTA_PROJETO_ELLO
-        dependencies[package_name] = get_last_git_hash('{}\\{}'.format(package_path, package_name))
+        dependencies[package_name] = get_last_git_hash('{}\\{}'.format(package_path, package_name)).decode('latin1')
 
-    with open('package.json', 'w') as f:
+    with open('package.json', 'w', encoding='utf-8') as f:
         f.write(json.dumps(package_info, indent=2))
 
 
