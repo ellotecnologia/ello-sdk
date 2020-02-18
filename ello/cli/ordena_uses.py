@@ -113,23 +113,23 @@ def sort_unit_names(unit_names):
     """
     units = []
 
-    units.extend(filter(basic_delphi_units, unit_names))
-    units.extend(filter(main_delphi_units, unit_names))
-    units.extend(filter(gui_delphi_units, unit_names))
-    units.extend(filter(database_delphi_units, unit_names))
-    units.extend(filter(dunit_units, unit_names))
-    units.extend(filter(indy_units, unit_names))
-    units.extend(filter(devexpress_units, unit_names))
-    units.extend(filter(basic_units, unit_names))
-    units.extend(filter(jcl_units, unit_names))
-    units.extend(filter(acbr_units, unit_names))
-    units.extend(filter(excellent_units, unit_names))
-    units.extend(filter(other_units, unit_names))
+    units.extend(list(filter(basic_delphi_units, unit_names)))
+    units.extend(list(filter(main_delphi_units, unit_names)))
+    units.extend(list(filter(gui_delphi_units, unit_names)))
+    units.extend(list(filter(database_delphi_units, unit_names)))
+    units.extend(list(filter(dunit_units, unit_names)))
+    units.extend(list(filter(indy_units, unit_names)))
+    units.extend(list(filter(devexpress_units, unit_names)))
+    units.extend(list(filter(basic_units, unit_names)))
+    units.extend(list(filter(jcl_units, unit_names)))
+    units.extend(list(filter(acbr_units, unit_names)))
+    units.extend(list(filter(excellent_units, unit_names)))
+    units.extend(list(filter(other_units, unit_names)))
 
-    forms_units = filter(ello_forms, unit_names) # Extrai as units referente a forms
+    forms_units = list(filter(ello_forms, unit_names)) # Extrai as units referente a forms
 
-    remaining_units = filter(lambda unit: unit not in units, unit_names)
-    remaining_units = filter(lambda unit: unit not in forms_units, remaining_units)
+    remaining_units = list(filter(lambda unit: unit not in units, unit_names))
+    remaining_units = list(filter(lambda unit: unit not in forms_units, remaining_units))
 
     units.extend(remaining_units)
     units.extend(forms_units)
@@ -145,16 +145,12 @@ def wrap_units_block(unit_names):
     return output
 
 
-def extract_and_sort_unit_block(data):
-    unit_names = list(extract_unit_names(data))
-    unit_names = sort_unit_names(unit_names)
-    return unit_names
-
-
 def main():
     import pyperclip
     data = pyperclip.paste()
-    unit_names = extract_and_sort_unit_block(data)
+    unit_names = list(extract_unit_names(data))
+    #breakpoint()
+    unit_names = sort_unit_names(unit_names)
     output = wrap_units_block(unit_names)
     pyperclip.copy(output)
 

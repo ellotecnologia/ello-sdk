@@ -30,7 +30,7 @@ def update_project_dependencies():
 
 
 def atualiza_dependencias_package_json():
-    logger.info('Coletando metadados do projeto')
+    logger.debug('Coletando metadados do projeto')
     with open('package.json', 'r', encoding='utf8') as json_file:
         package_info = json.load(json_file)
     dependencies = package_info['dependencies']
