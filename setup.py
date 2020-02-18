@@ -22,14 +22,14 @@ setup(
         'future==0.16.0',
         'configparser'
     ],
-    dependency_links=['git@github.com/kynan/dokuwikixmlrpc.git@0a01d6af2c8ff26acccbd1826b0c5ac9ca28a6a1'],
     entry_points={
         'console_scripts': [
             'ell=ello.cli.ell:main',
             'ordena-uses=ello.cli.ordena_uses:main',
             'configure=ello.cli.configure:main',
             'dof=ello.cli.dof:main',
-            'fbtrace=ello.cli.fbtrace:main'
+            'fbtrace=ello.cli.fbtrace:main',
+            'crystal=ello.cli.crystal:main'
         ]
     },
     include_package_data=True
