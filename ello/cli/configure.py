@@ -33,7 +33,9 @@ def atualiza_dependencias_package_json():
     logger.debug('Coletando metadados do projeto')
     with open('package.json', 'r', encoding='utf8') as json_file:
         package_info = json.load(json_file)
-    dependencies = package_info['dependencies']
+    dependencies = package_info.get('dependencies')
+    if not dependencies:
+        return
     for dependency in dependencies:
         package_name = dependency
         codigo_hash = dependencies[dependency]
