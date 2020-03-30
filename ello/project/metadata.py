@@ -52,6 +52,12 @@ class ProjectMetadata:
                 object_pairs_hook=collections.OrderedDict
             )
 
+        # Adiciona propriedade 'version_tag'
+        if "tag-prefix" in self._metadata:
+            self._metadata["version_tag"] = self._metadata["tag-prefix"] + self._metadata["version"]
+        else:
+            self._metadata["version_tag"] = self._metadata["version"]
+
     def update_version(self, version):
         """ Updates package.json version info and Project.dof version info """
         self._metadata['version'] = version

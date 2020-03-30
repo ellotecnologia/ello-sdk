@@ -21,15 +21,14 @@ TMP_CHANGELOG_FILE = os.environ.get('TEMP') + '\\ell_changelog.tmp'
 
 
 def make_changelog(args):
-    metadata = ProjectMetadata()
-    
     logger.info("Atualizando CHANGELOG.txt")
 
     if not os.path.isfile(CHANGELOG_FILE):
         touch_file(CHANGELOG_FILE)
 
-    previous_version = get_previous_version(metadata.version)
-    new_version = metadata.version
+    metadata = ProjectMetadata()
+    previous_version = get_previous_version(metadata.version_tag)
+    new_version = metadata.version_tag
 
     changes = get_changes_from(previous_version)
     changes = preprocess_commit_messages(changes)
