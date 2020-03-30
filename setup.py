@@ -17,7 +17,7 @@ setup(
         'colorama==0.3.9',
         'pyperclip',
         'sqlparse==0.2.4',
-        'Pygments==2.2.0',
+        'Pygments==2.5.2',
         'telepot',
         'future==0.16.0',
         'configparser'
@@ -29,6 +29,7 @@ setup(
             'configure=ello.cli.configure:main',
             'dof=ello.cli.dof:main',
             'fbtrace=ello.cli.fbtrace:main',
+            'dfmgrep=ello.cli.dfmgrep:main',
             'crystal=ello.cli.crystal:main'
         ]
     },

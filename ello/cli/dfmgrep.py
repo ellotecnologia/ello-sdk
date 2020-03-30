@@ -75,7 +75,14 @@ def search_in_dfm(search_term, filename):
         print('Found in "{}". Queries: {}'.format(filename, ', '.join(result)))
 
 
-if __name__ == "__main__":
+def main():
+    if len(sys.argv) < 2:
+        print('Uso: dfmgrep [termo_pesquisado]')
+        sys.exit(1)
     search_term = sys.argv[1]
     for filename in glob.glob("**/*.dfm", recursive=True):
         search_in_dfm(search_term, filename)
+
+
+if __name__ == "__main__":
+    main()
