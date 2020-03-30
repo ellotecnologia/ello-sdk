@@ -16,7 +16,7 @@ def basic_delphi_units(unit_name):
     unit_list = ['windows', 'classes', 'sysutils', 'strutils', 'variants', 
                  'contnrs', 'fmtbcd', 'math', 'inifiles', 'wininet', 'dateutils',
                  'typinfo', 'comobj', 'clipbrd', 'system.ioutils', 'filectrl', 'printers',
-                 'winsock', 'types']
+                 'winsock', 'types', 'syncobjs']
     return unit_name.lower() in unit_list
 
 
@@ -28,8 +28,8 @@ def main_delphi_units(unit_name):
 
 def gui_delphi_units(unit_name):
     unit_list = ['buttons', 'controls', 'comctrls', 'toolwin', 'dialogs', 'extctrls', 
-                 'graphics', 'menus', 'stdctrls', 'pngimage', 'grids', 'dbgrids', 
-                 'pngspeedbutton', 'actnlist', 'pngbitbtn', 'imglist', 'jpeg']
+                 'graphics', 'menus', 'stdctrls', 'grids', 'dbgrids', 
+                 'actnlist', 'imglist', 'jpeg']
     return unit_name.lower() in unit_list
 
 
@@ -61,6 +61,11 @@ def jcl_units(unit_name):
     return unit_name.startswith('jcl')
 
 
+def png_units(unit_name):
+    unit_name = unit_name.lower()
+    return unit_name.startswith('png')
+
+
 def acbr_units(unit_name):
     unit_name = unit_name.lower()
     return (unit_name.startswith('acbr')) or \
@@ -86,7 +91,7 @@ def excellent_units(unit_name):
 
 def other_units(unit_name):
     unit_list = ['acao', 'numedit', 'umsgwindows', 'dnbox', 'editbox', 'ptlbox1', 
-                 'pngimagelist', 'synedit', 'stringutils2', 'newbox', 'vistaaltfixunit',
+                 'synedit', 'stringutils2', 'newbox', 'vistaaltfixunit',
                  'ufirebirdeventbus']
     return unit_name.lower() in unit_list
 
@@ -123,6 +128,7 @@ def sort_unit_names(unit_names):
     units.extend(list(filter(basic_units, unit_names)))
     units.extend(list(filter(jcl_units, unit_names)))
     units.extend(list(filter(acbr_units, unit_names)))
+    units.extend(list(filter(png_units, unit_names)))
     units.extend(list(filter(excellent_units, unit_names)))
     units.extend(list(filter(other_units, unit_names)))
 
