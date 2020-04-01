@@ -31,6 +31,7 @@ setup(
             'fbtrace=ello.cli.fbtrace:main',
             'dfmgrep=ello.cli.dfmgrep:main',
             'dbgrep=ello.cli.dbgrep:main',
+            'crgrep=ello.cli.crgrep:main',
             'crystal=ello.cli.crystal:main'
         ]
     },

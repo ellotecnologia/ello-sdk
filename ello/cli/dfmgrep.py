@@ -101,6 +101,8 @@ def search_in_all_dfms(search_term):
 
 def main():
     if len(sys.argv) < 2:
+        print('DFMGrep busca o termo informado em listas de strings dos arquivos .dfm')
+        print('')
         print('Uso: dfmgrep [arquivo_dfm] <termo_pesquisado>')
         sys.exit(1)
 
