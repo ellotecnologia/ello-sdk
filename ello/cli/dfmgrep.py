@@ -81,7 +81,7 @@ def search_for(search_term, filename):
     found = []
     for k, v in queries.items():
         sql = '\n'.join(v).lower()
-        if re.search(r'\b' + search_term + r'\b', sql):
+        if re.search(r'\b' + search_term + r'\b', sql, flags=re.I):
             found.append(k)
     return found
 
