@@ -30,6 +30,7 @@ setup(
             'dof=ello.cli.dof:main',
             'fbtrace=ello.cli.fbtrace:main',
             'dfmgrep=ello.cli.dfmgrep:main',
+            'dbgrep=ello.cli.dbgrep:main',
             'crystal=ello.cli.crystal:main'
         ]
     },
