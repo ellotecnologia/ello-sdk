@@ -62,6 +62,7 @@ class TextManipulationTests(unittest.TestCase):
         self.assertTrue(ignore_line("Renomeado variável xxx"))
         self.assertTrue(ignore_line("Renomeei variável xxx"))
         self.assertTrue(ignore_line("Removi dependência do data Set e passei a manipular o Objeto FCartoes"))
+        self.assertTrue(ignore_line("Adicionei script para modificar tabela xxx"))
     
     def test_message_removal(self):
         messages = [
@@ -86,7 +87,6 @@ class TextManipulationTests(unittest.TestCase):
             '- -Ajustes na tela de cheques para não deixar editar cheques que nao sejam incluidos manualmente -criado scripts para ajustes em lançamentos financeiros orfãos -corrigido erro de não excluir lancamentos do contas a pagar no cancelamento de despesas feito pela registradora <Triburtini>'
         ]
         expected_messages = [
-            '- Aprimoramento na tela de cheques para não deixar editar cheques que nao sejam incluidos manualmente -criado scripts para ajustes em lançamentos fi... <Triburtini>',
             '- Correção na atualização do saldo do colaborador <Triburtini>'
         ]
         messages = preprocess_commit_messages(messages)
