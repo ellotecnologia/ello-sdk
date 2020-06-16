@@ -8,6 +8,7 @@ import re
 import telepot
 
 from ello.sdk import config
+from ello.sdk import changelog
 
 logger = logging.getLogger()
 
@@ -26,9 +27,7 @@ def send_notification(project_name):
 
 
 def get_changelog_text():
-    changelog = os.environ.get('TEMP') + '\\ell_changelog.tmp'
-    with open(changelog, encoding='latin1') as f:
-        text = f.read()
+    text = changelog.latest_changes_text()
     text = add_emojis(text)
     return text
 

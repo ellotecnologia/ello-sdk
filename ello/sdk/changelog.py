@@ -80,6 +80,20 @@ def merge_temp_with_changelog():
     os.remove('result.txt')
 
 
+def latest_changes_text():
+    """Retorna o texto da última modificação do changelog"""
+    changelog_header = re.compile('\d{2}/\d{2}/\d{4} - ')
+    lines = []
+    with open('CHANGELOG.txt') as changelog:
+        lines.append(changelog.readline())
+        for line in changelog:
+            match = changelog_header.search(line)
+            if match:
+                break
+            lines.append(line)
+    return ''.join(lines)
+
+
 def touch_file(fname):
     with open(fname, 'a'):
         os.utime(fname, None)
