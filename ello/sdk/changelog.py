@@ -32,7 +32,7 @@ def make_changelog(args):
 
     changes = get_changes_from(previous_version)
     changes = preprocess_commit_messages(changes)
-    generate_temp_changelog(new_version, changes)
+    generate_temp_changelog(metadata.version, changes)
 
     merge_temp_with_changelog()
 
