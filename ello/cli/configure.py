@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import sys
 import os
 import os.path
 import re
@@ -105,8 +106,8 @@ def checkout_pacote(nome_pacote, caminho, novo_hash):
         return
 
     if not copia_de_trabalho_limpa():
-        logger.info("Existem modificações não commitadas na pasta {0}\\{1}. Cancelando atualização.".format(caminho, nome_pacote))
-        return
+        logger.info("Existem modificações não commitadas na pasta {0}\\{1}.".format(caminho, nome_pacote))
+        sys.exit(1)
 
     logger.info('Atualizando {0} para a revisão {1}'.format(nome_pacote, novo_hash[0:7]))
     exit_code = git('checkout {0}'.format(novo_hash))
@@ -131,7 +132,7 @@ def copia_de_trabalho_limpa():
 
 
 def main():
-    logging.basicConfig(format='=> %(message)s', level=logging.INFO)
+    logging.basicConfig(format='%(message)s', level=logging.INFO)
     parser = argparse.ArgumentParser(description='Gerenciador de dependencias de pacotes Ello')
     parser.add_argument('--save', action="store_true", default=False)
     args = parser.parse_args()
