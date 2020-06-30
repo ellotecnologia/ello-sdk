@@ -1,4 +1,4 @@
-# encoding: utf8
+# encoding: utf-8
 """ Emulador de balança em rede
 """
 import socket
@@ -17,7 +17,7 @@ s.listen(1)
 def aguarda_conexao():
     while True:
         conn, addr = s.accept()
-        print addr, 'conectou'
+        print(addr, 'conectou')
 
         while True:
             try:
@@ -28,7 +28,7 @@ def aguarda_conexao():
             conn.send('{0}'.format(iterador_pesos.next()))
             conn.close()
 
-        print 'closing...'
+        print('closing...')
         conn.close()
 
 while True:
@@ -37,3 +37,10 @@ while True:
     except socket.error:
         continue
 
+# Ex. de configuracao do Ello.ini
+# [Balanca]
+# modelo=1
+# porta=TCP:localhost:8000
+# baud=9600
+# intervalo=10
+# arqlog= 
