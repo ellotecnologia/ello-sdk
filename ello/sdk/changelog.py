@@ -64,7 +64,9 @@ def generate_temp_changelog(version, changes):
         f.write(headline)
         f.write("\n")
         for line in changes:
-            f.write(line)
+            # As instruções de codificação são para corrigir caracteres que não são
+            # aceitos no encoding Latin-1
+            f.write(line.encode('latin1', errors='replace').decode('latin1'))
             f.write("\n")
         f.write("\n")
 
