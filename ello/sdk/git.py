@@ -37,10 +37,28 @@ def get_latest_tag():
 
 
 def get_changes_from(from_tag):
-    cmd = ['git', 'changelog', '--reverse', '{}..'.format(from_tag)]
+    """ Retorna uma lista com as mensagens no formato:
+        ['- msg <author>', '- msg <author>', ...]
+    """
+    cmd = ['git', 'log', '--reverse', '--first-parent', '--no-merges', '--pretty=format:%B-> author: <%an>', '{}..'.format(from_tag)]
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    changes = p.communicate()[0].splitlines()
-    changes = map(lambda text: text.decode('utf8'), changes)
+    git_output = p.communicate()[0].splitlines()
+    git_output = map(lambda text: text.decode('utf8'), git_output)
+    
+    # Coleta apenas a primeira linha da mensagem, ignorando as linhas adicionais.
+    changes = []
+    try:
+        while True:
+            message = next(git_output)
+            author = ''
+            while author == '':
+                tmp_line = next(git_output)
+                if tmp_line.startswith('-> author: '):
+                    author = ' '.join(tmp_line.split()[2:])
+            changes.append('- {} {}'.format(message, author))
+    except StopIteration:
+        pass
+    
     return changes
 
 
