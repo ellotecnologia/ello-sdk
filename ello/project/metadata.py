@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import os
+import os.path
 import json
 import collections
 import configparser
@@ -22,13 +23,19 @@ class ProjectMetadata:
             self.metadata_file = self.get_current_project_name() + '.dof'
             self.metadata_type = os.path.splitext(self.metadata_file)[1]
 
+        # No metadata found, let's get some info from the current folder.
+        if not os.path.isfile(self.metadata_file):
+            self._metadata['name'] = os.path.basename(os.getcwd())
+            self._metadata['project_name'] = self._metadata['name']
+            return
+            
         self._load_metadata()
 
     def get_current_project_name(self):
         dof_files = glob.glob('*.dof') 
-        if not dof_files:
-            raise Exception('Arquivo .dof não encontrado na pasta atual')
-        return os.path.splitext(dof_files[0])[0]
+        if dof_files:
+           return os.path.splitext(dof_files[0])[0]
+        return ''
 
     def _load_metadata(self):
         if self.metadata_type == '.json':
