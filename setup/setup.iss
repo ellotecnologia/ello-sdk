@@ -26,6 +26,7 @@ OutputDir=dist
 OutputBaseFilename=Ello-SDK-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
+ChangesEnvironment=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
