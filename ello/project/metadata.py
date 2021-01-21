@@ -1,6 +1,3 @@
-# encoding: utf8
-from __future__ import unicode_literals
-
 import os
 import os.path
 import json
@@ -59,12 +56,6 @@ class ProjectMetadata:
                 object_pairs_hook=collections.OrderedDict
             )
 
-        # Adiciona propriedade 'version_tag'
-        if "tag-prefix" in self._metadata:
-            self._metadata["version_tag"] = self._metadata["tag-prefix"] + self._metadata["version"]
-        else:
-            self._metadata["version_tag"] = self._metadata["version"]
-
     def update_version(self, version):
         """ Updates package.json version info and Project.dof version info """
         self._metadata['version'] = version
@@ -98,8 +89,12 @@ class ProjectMetadata:
     def conditionals(self):
         return self._metadata['conditionals']
 
+    @property
+    def tag_prefix(self):
+        return self._metadata.get('tag-prefix', None)
+        
     def __getattr__(self, name):
-        return self._metadata[name]
+        return self._metadata.get(name, None)
         
     def dependencies(self):
         for dep in self._metadata['dependencies'].keys():

@@ -2,6 +2,7 @@ import os
 import subprocess
 import logging
 import shutil
+import shlex
 
 logger = logging.getLogger()
 
@@ -11,6 +12,13 @@ def git(args):
     with open(os.devnull, 'w') as FNULL:
         exit_code = subprocess.call(cmd, stdout=FNULL, stderr=subprocess.STDOUT)
     return exit_code
+
+
+def get_last_tag():
+    """ Returns the last defined tag in the current repository """
+    p = subprocess.Popen(['git', 'describe', '--abbrev=0', '--tags'], stdout=subprocess.PIPE)
+    last_tag = p.communicate()[0].strip()
+    return last_tag.decode('latin1')
 
 
 def create_version_tag(tag_name):
@@ -34,6 +42,15 @@ def get_latest_tag():
     cmd = 'git describe --tags {}'.format(last_hash.decode('latin1'))
     p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     return p.communicate()[0].strip().decode('latin1')
+
+
+def get_sorted_tags():
+    """ Returns a list of tags sorted by date (oldest first) """
+    cmd = "git for-each-ref --sort=creatordate --format '%(refname)' refs/tags"
+    p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
+    lines = p.communicate()[0].decode('latin1')
+    tags = list(map(lambda t: t.replace('refs/tags/', ''), lines.splitlines()))
+    return tags
 
 
 def get_changes_from(from_tag):

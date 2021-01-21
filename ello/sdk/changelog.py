@@ -10,8 +10,9 @@ import re
 import logging
 from datetime import datetime
 
-from .git import git, get_changes_from, create_version_tag, push_tags
+from .git import git, get_changes_from, create_version_tag, push_tags, get_last_tag
 from .text_manipulation import preprocess_commit_messages
+from .version import get_previous_version
 from ello.project import ProjectMetadata
 
 logger = logging.getLogger()
@@ -27,8 +28,7 @@ def make_changelog(args):
         touch_file(CHANGELOG_FILE)
 
     metadata = ProjectMetadata()
-    previous_version = get_previous_version(metadata.version_tag)
-    new_version = metadata.version_tag
+    previous_version = get_previous_version(metadata)
 
     changes = get_changes_from(previous_version)
     changes = preprocess_commit_messages(changes)
@@ -37,8 +37,8 @@ def make_changelog(args):
     merge_temp_with_changelog()
 
     # Atualiza informações no repositório
-    commit_changelog(new_version)
-    create_version_tag(new_version)
+    commit_changelog(metadata.version)
+    create_version_tag(metadata.version)
     
     if not args.no_push:
         push_tags()
@@ -48,13 +48,6 @@ def commit_changelog(version):
     logger.info("Criando commit de atualização de versão...")
     git('add ' + CHANGELOG_FILE)
     git('commit -am "Atualização do changelog ({0})" '.format(version))
-
-
-def get_previous_version(version):
-    version_list = version.split('.')
-    previous_build_number = int(version_list[-1], 10) - 1
-    version_list[-1] = str(previous_build_number)
-    return '.'.join(version_list)
 
 
 def generate_temp_changelog(version, changes):

@@ -67,16 +67,20 @@ class DOFFile(object):
 
     @property
     def search_path(self):
-        return self._change_variable_to_real_path(self.config.get('Directories', 'SearchPath'))
+        return self.config.get('Directories', 'SearchPath')
 
-    def _change_variable_to_real_path(self, search_path):
-        variables = set(re.findall('\$\((\w+)\)', search_path))
-        for variable in variables:
-            real_value = os.environ.get(variable)
-            if not real_value:
-                raise Exception("Environment variable {} is not defined".format(variable))
-            search_path = re.sub('\$\({}\)'.format(variable), real_value, search_path)
-        return search_path
+    @search_path.setter
+    def search_path(self, path):
+        self.config.set('Directories', 'SearchPath', path)
+        
+    #def _change_variable_to_real_path(self, search_path):
+    #    variables = set(re.findall('\$\((\w+)\)', search_path))
+    #    for variable in variables:
+    #        real_value = os.environ.get(variable)
+    #        if not real_value:
+    #            raise Exception("Environment variable {} is not defined".format(variable))
+    #        search_path = re.sub('\$\({}\)'.format(variable), real_value, search_path)
+    #    return search_path
 
     def get(self, section, option):
         return self.config.get(section, option)
