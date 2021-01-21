@@ -85,6 +85,15 @@ class DOFFile(object):
         self.config.set(section, option, value)
 
     def save(self):
+        # Remove seções de histórico
+        self.config.remove_section('HistoryLists\hlConditionals')
+        self.config.remove_section('HistoryLists\hlUnitAliases')
+        self.config.remove_section('HistoryLists\hlSearchPath')
+        self.config.remove_section('HistoryLists\hlSearchPath')
+        self.config.remove_section('HistoryLists\hlUnitOutputDirectory')
+        self.config.remove_section('HistoryLists\hlOutputDirectorry')
+        self.config.remove_section('HistoryLists\hlDebugSourcePath')
+        
         with codecs.open(self.filename, 'wb', encoding='latin1') as f:
             self.config.write(f)
 
