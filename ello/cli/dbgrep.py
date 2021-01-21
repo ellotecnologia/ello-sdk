@@ -7,7 +7,7 @@ import sys
 import fdb
 
 # Usa a base de dados de testes
-conn = fdb.connect('/ello/dados/testes/TESTES-1.2.56.ELLO')
+conn = fdb.connect('/ello/dados/testes/TESTE.ELLO')
 cursor = conn.cursor()
 
 
