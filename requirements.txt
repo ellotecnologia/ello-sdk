@@ -1,9 +1,9 @@
-requests==2.22.0
+requests==2.25.1
 telepot==12.7
 pywin32==227
-dokuwiki==1.2
-pyperclip==1.7.0
+dokuwiki==1.2.0
+pyperclip==1.8.2
 colorama==0.3.9
 sqlparse==0.2.4
-Pygments==2.2.0
+pygments==2.5.2
 fdb==1.8
