@@ -33,7 +33,6 @@ def increment_version(project, previous_version):
 
 def get_next_version(current_version):
     """ Incrementa o número do release da versão """
-    breakpoint()
     version_list = current_version.split('.')
     next_build_number = int(version_list[-1], 10) + 1
     version_list[-1] = str(next_build_number)

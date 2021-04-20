@@ -1,8 +1,10 @@
 venv/*
 *.pyc
 *.swp
+*.egg-info
+*.dcu
+*.dcp
 dist
 tmp
 bin/
-*.egg-info
 build
