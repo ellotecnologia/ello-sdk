@@ -6,11 +6,11 @@ import shlex
 
 logger = logging.getLogger()
 
+FNULL = open(os.devnull, 'w')
 
 def git(args):
     cmd = 'git {0}'.format(args)
-    with open(os.devnull, 'w') as FNULL:
-        exit_code = subprocess.call(cmd, stdout=FNULL, stderr=subprocess.STDOUT)
+    exit_code = subprocess.call(cmd, stdout=FNULL, stderr=subprocess.STDOUT)
     return exit_code
 
 
@@ -88,3 +88,16 @@ def install_hooks(args):
     for root, dirs, files in os.walk(hooks_path):
         for filename in files:
             shutil.copyfile(os.path.join(hooks_path, filename), ".git/hooks/" + filename)
+
+
+def repo_has_pending_changes():
+    """ Retorna 'True' caso o repositório atual possua modificações não commitadas """
+    return_code = subprocess.call("git diff-index --quiet HEAD --", stdout=FNULL, stderr=subprocess.STDOUT)
+    return return_code != 0
+
+
+if __name__ == "__main__":
+    if repo_has_pending_changes():
+        print('Repositório possui modificações não commitadas')
+    else:
+        print('Repositório sem nenhuma modificação')
