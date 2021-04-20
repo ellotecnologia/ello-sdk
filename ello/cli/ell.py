@@ -14,7 +14,6 @@ from ello.sdk.database import create_new_sql_patch
 from ello.chamados import inicia_chamado
 from ello.notifications import notify_team
 from ello.project import ProjectMetadata, init_project, require_dependency
-from ello.exportador import exporta_menus, exporta_programas
 
 from ello.tests import update_test_project, generate_test_case
 
@@ -68,9 +67,6 @@ def main():
     #    .add_argument("numero_chamado", nargs="?")
 
     #cmd.add_parser("new-cert", help="Cria um novo certificado A1 de teste")
-
-    #cmd.add_parser("exporta-menus", help="Gera um script de menu conforme banco em uso")
-    #cmd.add_parser("exporta-programas", help="Gera um script dos programas cadastrados no banco de dados atual")
     
     generate_cmd = cmd.add_parser("generate", aliases=["g"], help="Gerador de códigos")
     generate_parser = generate_cmd.add_subparsers()
