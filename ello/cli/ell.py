@@ -20,6 +20,7 @@ from ello.chamados import inicia_chamado
 from ello.notifications import notify_team
 from ello.project import ProjectMetadata, init_project, require_dependency
 from ello.exportador import exporta_menus, exporta_programas
+from ello.tests.sync import update_test_project
 
 from delphi import Project
 from delphi.dof import clear_dof_history
@@ -66,6 +67,10 @@ def main():
     
     install_cmd = cmd.add_parser("install", help="Instala dependencias do projeto")
     install_cmd.set_defaults(func=install_dependencies)
+    
+    sub_cmd = cmd.add_parser("update-test-project", aliases=["utp"], help="Atualiza units do projeto de Teste de acordo com o projeto testado")
+    sub_cmd.add_argument("test_project_path", nargs='?', help="Caminho do arquivo .dpr")
+    sub_cmd.set_defaults(func=update_test_project)
 
     #cmd.add_parser("workon", help="Atualiza o status de um chamado para 'Em Andamento'") \
     #    .add_argument("numero_chamado", nargs="?")
@@ -74,10 +79,6 @@ def main():
 
     cmd.add_parser("exporta-menus", help="Gera um script de menu conforme banco em uso")
     cmd.add_parser("exporta-programas", help="Gera um script dos programas cadastrados no banco de dados atual")
-
-    #p = cmd.add_parser("update-testproj", help="Atualiza as units de um projeto Delphi de testes usando como base outro projeto Delphi")
-    #p.add_argument("test_dpr", nargs="?")
-    #p.add_argument("reference_dpr", nargs="?")
     
     c = cmd.add_parser("new-test")
     c.add_argument("sut", nargs="?")
