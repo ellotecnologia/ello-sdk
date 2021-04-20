@@ -1,7 +1,3 @@
-#!/c/python27/python.exe
-# encoding: utf8
-from __future__ import unicode_literals
-
 import sys
 import logging
 import argparse
@@ -14,22 +10,18 @@ from ello.sdk.version import set_version, bump_version
 from ello.sdk.changelog import make_changelog
 from ello.sdk.wiki import update_wiki_pages
 from ello.sdk.git import install_hooks
-from ello.sdk.test_utils import update_test_project
 from ello.sdk.database import create_new_sql_patch
 from ello.chamados import inicia_chamado
 from ello.notifications import notify_team
 from ello.project import ProjectMetadata, init_project, require_dependency
 from ello.exportador import exporta_menus, exporta_programas
-from ello.tests.sync import update_test_project
+
+from ello.tests import update_test_project, generate_test_case
 
 from delphi import Project
 from delphi.dof import clear_dof_history
 from delphi.compiler import Compiler, RELEASE_MODE, DEBUG_MODE
 
-def create_new_test(args):
-    tmpl = open('/dev/ello-sdk/TestTemplate.pas')
-    print(tmpl.read().format(sut=args.sut))
-    tmpl.close()
 
 def main():
     parser = argparse.ArgumentParser(description="Kit de desenvolvimento Ello")
@@ -77,15 +69,19 @@ def main():
 
     #cmd.add_parser("new-cert", help="Cria um novo certificado A1 de teste")
 
-    cmd.add_parser("exporta-menus", help="Gera um script de menu conforme banco em uso")
-    cmd.add_parser("exporta-programas", help="Gera um script dos programas cadastrados no banco de dados atual")
+    #cmd.add_parser("exporta-menus", help="Gera um script de menu conforme banco em uso")
+    #cmd.add_parser("exporta-programas", help="Gera um script dos programas cadastrados no banco de dados atual")
     
-    c = cmd.add_parser("new-test")
-    c.add_argument("sut", nargs="?")
-    c.set_defaults(func=create_new_test)
+    generate_cmd = cmd.add_parser("generate", aliases=["g"], help="Gerador de códigos")
+    generate_parser = generate_cmd.add_subparsers()
+
+    test_cmd = generate_parser.add_parser("test", help="Gera test case para a unit informada")
+    test_cmd.add_argument("sut", nargs="?", help="Caminho da unit a ser testada")
+    test_cmd.add_argument("dpr", nargs="?", default='', help="Caminho do projeto de testes (.dpr)")
+    test_cmd.set_defaults(func=generate_test_case)
     
-    c = cmd.add_parser("new-patch")
-    c.set_defaults(func=create_new_sql_patch)
+    patch_cmd = generate_parser.add_parser("patch", help="Gera novo patch")
+    patch_cmd.set_defaults(func=create_new_sql_patch)
 
     args = parser.parse_args()
     if not args.command:
@@ -93,22 +89,6 @@ def main():
         sys.exit(0)
         
     args.func(args)
-    
-
-#def main():
-#    args = parse_args()
-#    command = args.command
-#
-#    elif command == 'require':
-#        require_dependency()
-#    elif command == 'workon':
-#        inicia_chamado(args.numero_chamado)
-#    elif command == 'exporta-menus':
-#        exporta_menus()
-#    elif command == 'exporta-programas':
-#        exporta_programas()
-#    elif command == 'update-testproj':
-#        update_test_project(args.test_dpr, args.reference_dpr)
 
 
 if __name__ == "__main__":
