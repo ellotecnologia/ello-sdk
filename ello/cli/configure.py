@@ -13,7 +13,7 @@ import json
 import collections
 import logging
 
-from ello.sdk.git import git
+from ello.sdk.git import git, repo_has_pending_changes
 
 logger = logging.getLogger()
 
@@ -105,7 +105,7 @@ def checkout_pacote(nome_pacote, caminho, novo_hash):
         logger.debug("Pacote {} já está na versão correta".format(nome_pacote))
         return
 
-    if not copia_de_trabalho_limpa():
+    if repo_has_pending_changes():
         logger.info("Existem modificações não commitadas na pasta {0}\\{1}.".format(caminho, nome_pacote))
         sys.exit(1)
 
@@ -124,11 +124,6 @@ def obtem_hash_atual():
     command = 'git log -1 --pretty="%H"'
     git = subprocess.Popen(command, stdout=subprocess.PIPE)
     return git.communicate()[0].strip().decode('latin1')
-
-
-def copia_de_trabalho_limpa():
-    return_code = subprocess.call("git diff-index --quiet HEAD --", stdout=FNULL, stderr=subprocess.STDOUT)
-    return return_code==0
 
 
 def main():
