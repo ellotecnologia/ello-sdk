@@ -36,11 +36,11 @@ def main():
     set_version_cmd.add_argument("version", help="Numero da versao")
     set_version_cmd.set_defaults(func=set_version)
     
-    bump_version_cmd = cmd.add_parser("bump-version", help="Incrementa a versão do projeto")
+    bump_version_cmd = cmd.add_parser("bump-version", aliases=['bv'], help="Incrementa a versão do projeto")
     bump_version_cmd.add_argument("--project", nargs='?', help="Caminho do arquivo .dpr")
     bump_version_cmd.set_defaults(func=bump_version)
     
-    make_changelog_cmd = cmd.add_parser("make-changelog", help="Atualiza o arquivo de changelog")
+    make_changelog_cmd = cmd.add_parser("make-changelog", aliases=['mc'], help="Atualiza o arquivo de changelog")
     make_changelog_cmd.add_argument("-n", "--no-push", help="Nao fazer push do changelog", action="store_true")
     make_changelog_cmd.set_defaults(func=make_changelog)
     
