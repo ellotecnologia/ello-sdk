@@ -59,7 +59,7 @@ def get_changes_from(from_tag):
     """ Retorna uma lista com as mensagens no formato:
         ['- msg <author>', '- msg <author>', ...]
     """
-    cmd = ['git', 'log', '--reverse', '--first-parent', '--no-merges', '--pretty=format:%B-> author: <%an>', '{}..'.format(from_tag)]
+    cmd = ['git', 'log', '--reverse', '--first-parent', '--no-merges', '--pretty=format:%B-> author: <%an>', '{}..'.format(from_tag), '.']
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     git_output = p.communicate()[0].splitlines()
     git_output = map(lambda text: text.decode('utf8'), git_output)
