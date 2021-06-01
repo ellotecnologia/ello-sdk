@@ -13,7 +13,7 @@ from .git import get_sorted_tags
 def bump_version(args):
     """ Incrementa a versão do projeto """
     project = ProjectMetadata('package.json')
-    previous_version = get_previous_version(project)
+    previous_version = project.version #get_previous_version(project)
     args.version = increment_version(project, previous_version)
     set_version(args)
 
