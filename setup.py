@@ -14,13 +14,11 @@ setup(
         'fdb',
         'dokuwiki==1.2',
         'requests',
-        'colorama==0.3.9',
+        'colorama',
         'pyperclip',
-        'sqlparse==0.2.4',
-        'Pygments==2.5.2',
-        'telepot',
-        'future==0.16.0',
-        'configparser'
+        'sqlparse',
+        'Pygments',
+        'telepot'
     ],
     entry_points={
         'console_scripts': [

@@ -38,7 +38,7 @@ def make_changelog(args):
 
     # Atualiza informações no repositório
     commit_changelog(metadata.version)
-    create_version_tag(metadata.version)
+    create_version_tag(metadata)
     
     if not args.no_push:
         if push_tags() != 0:
