@@ -62,10 +62,10 @@ def generate_test_case(args):
     test_project = args.dpr or 'tests/Integration/IntegrationTests.dpr'
      
     tests_path = os.path.dirname(test_project)
-    test_unit = tests_path + folder + '\\U' + sut + 'Tests.pas'
+    test_unit = os.path.join(tests_path, folder) + '\\U' + sut + 'Tests.pas'
     
     if os.path.exists(test_unit):
-        print('Test suite já existe:')
+        print('Test suite j? existe:')
         print('  ' + test_unit)
         return
 
