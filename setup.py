@@ -11,7 +11,7 @@ setup(
     packages=find_packages(),
     description=description,
     install_requires = [
-        'fdb==1.8',
+        'fdb',
         'dokuwiki==1.2',
         'requests',
         'colorama==0.3.9',
