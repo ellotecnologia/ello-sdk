@@ -41,7 +41,8 @@ def make_changelog(args):
     create_version_tag(metadata.version)
     
     if not args.no_push:
-        push_tags()
+        if push_tags() != 0:
+            logger.info('==> Falha ao fazer push da atualização do changelog <==')
 
 
 def commit_changelog(version):

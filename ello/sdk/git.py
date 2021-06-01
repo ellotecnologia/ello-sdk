@@ -28,8 +28,10 @@ def create_version_tag(tag_name):
 
 def push_tags():
     logger.info("Enviando atualizações para o repositório remoto (commits, tags)...")
-    git("push")
-    git("push --tags")
+    exit_code = git("push")
+    if exit_code == 0:
+        exit_code = git("push --tags")
+    return exit_code
 
 
 def get_latest_tag():
