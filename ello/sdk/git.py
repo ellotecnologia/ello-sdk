@@ -25,7 +25,7 @@ def create_version_tag(project_metadata):
     if project_metadata.tag_prefix:
         tag_name = project_metadata.tag_prefix + project_metadata.version
     else:
-        tab_name = project_metadata.version
+        tag_name = project_metadata.version
     logger.info("Criando tag {}".format(tag_name))
     git("tag {0}".format(tag_name))
 
