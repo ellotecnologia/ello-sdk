@@ -72,7 +72,7 @@ def main():
     generate_parser = generate_cmd.add_subparsers()
 
     test_cmd = generate_parser.add_parser("test", help="Gera test case para a unit informada")
-    test_cmd.add_argument("sut", nargs="?", help="Caminho da unit a ser testada")
+    test_cmd.add_argument("unit", nargs="?", help="Caminho da unit a ser testada")
     test_cmd.add_argument("dpr", nargs="?", default='', help="Caminho do projeto de testes (.dpr)")
     test_cmd.set_defaults(func=generate_test_case)
     
