@@ -66,6 +66,19 @@ def png_units(unit_name):
     return unit_name.startswith('png')
 
 
+def synapse_units(unit_name):
+    unit_list = [
+        'asn1util', 'blcksock', 'clamsend', 'dnssend', 'ftpsend', 'ftptsend',
+        'httpsend', 'imapsend', 'laz_synapse', 'ldapsend', 'mimeinln', 'mimemess',
+        'mimepart', 'nntpsend', 'pingsend', 'pop3send', 'slogsend', 'smtpsend',
+        'snmpsend', 'sntpsend', 'ssl_cryptlib', 'ssl_libssh2', 'ssl_openssl',
+        'ssl_openssl_lib', 'ssl_sbb', 'ssl_streamsec', 'synachar', 'synacode',
+        'synacrypt', 'synadbg', 'synafpc', 'synaicnv', 'synaip', 'synamisc', 'synaser',
+        'synautil', 'synsock', 'tlntsend', 'tzutil'
+    ]
+    return unit_name.lower() in unit_list
+
+
 def acbr_units(unit_name):
     unit_name = unit_name.lower()
     return (unit_name.startswith('acbr')) or \
@@ -76,12 +89,15 @@ def acbr_units(unit_name):
 
 
 def basic_units(unit_name):
-    unit_list = ['stringutils', 'udateutils', 'urecordlock', 'logging', 'umath', 'synacode', 'httpsend']
+    unit_list = ['udateutils', 'urecordlock', 'logging', 'umath', 'synacode', 'httpsend']
     return unit_name.lower() in unit_list
 
 
 def excellent_units(unit_name):
-    unit_list = ['ufirebird', 'uquerybuilder', 'uactiverecord', 'speedbuttonstacked', 'labevelell']
+    unit_list = [
+        'ufirebird', 'uquerybuilder', 'uactiverecord', 'speedbuttonstacked',
+        'labevelell', 'stringutils'
+    ]
     unit_name = unit_name.lower()
     return unit_name.startswith('ell') or \
            unit_name.startswith('exl') or \
@@ -91,7 +107,7 @@ def excellent_units(unit_name):
 
 def other_units(unit_name):
     unit_list = ['acao', 'numedit', 'umsgwindows', 'dnbox', 'editbox', 'ptlbox1', 
-                 'synedit', 'stringutils2', 'newbox', 'vistaaltfixunit',
+                 'synedit', 'newbox', 'vistaaltfixunit',
                  'ufirebirdeventbus']
     return unit_name.lower() in unit_list
 
@@ -127,6 +143,7 @@ def sort_unit_names(unit_names):
     units.extend(list(filter(devexpress_units, unit_names)))
     units.extend(list(filter(basic_units, unit_names)))
     units.extend(list(filter(jcl_units, unit_names)))
+    units.extend(list(filter(synapse_units, unit_names)))
     units.extend(list(filter(acbr_units, unit_names)))
     units.extend(list(filter(png_units, unit_names)))
     units.extend(list(filter(excellent_units, unit_names)))
