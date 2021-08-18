@@ -57,6 +57,7 @@ def main():
     busca_termo_em_tgeretiqueta(search_term)
     busca_termo_em_tgerpesquisa(search_term)
     busca_termo_em_tplccontafixa(search_term)
+    cursor.close()
 
 
 if __name__ == "__main__":
