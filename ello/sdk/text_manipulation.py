@@ -4,7 +4,6 @@ import functools
 
 def preprocess_commit_messages(messages):
     messages = filter(remove_marked_messages, messages)
-    messages = filter(lambda msg: not re.search('\s*wip\s*', msg, flags=re.I), messages)
     messages = map(remove_unnecessary_characters, messages)
     messages = map(remove_issue_number, messages)
     messages = map(crop_message, messages)
@@ -43,7 +42,7 @@ def remove_issue_number(text):
         text, author = m.groups()
     else:
         text, author = text, ""
-    text = re.sub('\s*\(\s*(resolve|resolves|fix)\s+#\d+\s*\)\s*', '', text)
+    text = re.sub('\s*\(\s*(resolve|resolves|fix)\s+#\d+\s*\)\s*', '', text, flags=re.I)
     return '{} {}'.format(text, author).strip()
 
 
@@ -146,6 +145,7 @@ def ignore_line(text):
     technical_terms.append(r'makefile')
     technical_terms.append('projetos* de teste')
     
+    technical_terms.append(r'\bwip\b')
     technical_terms.append(r'\bdebug\b')
     technical_terms.append(r'\bsource\b')
     technical_terms.append(r'\bpath\b')
