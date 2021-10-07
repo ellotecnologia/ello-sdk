@@ -48,7 +48,7 @@ def parse_queries_from_dfm(filename):
             elif state == State.QUERY:
                 if line == 'end':
                     state = State.OUTER
-                elif 'Params = <' in line:
+                elif line.endswith('Params = <'):
                     state = State.PARAMS
                 elif 'SQL.Strings' in line:
                     state = State.STRINGLIST
