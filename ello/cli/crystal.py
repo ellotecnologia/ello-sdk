@@ -4,24 +4,59 @@ import fnmatch
 import argparse
 import re
 import fdb
+import glob
 
 import pywintypes
 from win32com.client import Dispatch
 
+SUBREPORT_KIND = 5
+
+def search_in_report(search_term, report_file):
+    app = Dispatch('CrystalRunTime.Application')
+    report = app.OpenReport(report_file)
+    
+    if _search_in_report(search_term, report):
+        print(f'Found in "{report_file}"')
+
+    for section in report.Sections:
+        for report_object in section.ReportObjects:
+            if report_object.Kind == SUBREPORT_KIND:
+                subreport = report_object.OpenSubreport()
+                if _search_in_report(search_term, subreport):
+                    print(f'Found in "{report_file}" section ' + report_object.Name)
+
+
+def _search_in_report(search_term, report):
+    report.enableParameterPrompting = False
+    
+    try:
+        if search_term.lower() in report.sqlquerystring.lower():
+            return True
+    except pywintypes.com_error as e:
+        #print(f'Error in "{report_file}":\n\t{e.args}')
+        print(f'Error:\n\t{e.args}')
+
+    return False
+
+
+def search_in_all_reports(search_term):
+    for filename in glob.glob(r"C:\ello\relatorios\**\*.rpt", recursive=True):
+        search_in_report(search_term, filename)
+
+
+def list_query_string(filename):
+    report = open_crystal_report(filename)
+    print(report.sqlquerystring)
+    for section in report.Sections:
+        for report_object in section.ReportObjects:
+            if report_object.Kind == SUBREPORT_KIND:
+                subreport = report_object.OpenSubreport()
+                subreport.enableParameterPrompting = False
+                print(subreport.sqlquerystring)
+
 
 def log(message):
     print(message)
-
-
-def relatorios():
-    """ Generator que retorna todos os relatórios contidos na pasta relatórios do Ello
-    """
-    for root, dirnames, filenames in os.walk('C:\\ello\\relatorios'):
-        for filename in fnmatch.filter(filenames, '*.rpt'):
-            filename = os.path.join(root, filename)
-            if 'Relatórios Bugados' in filename:
-                continue
-            yield filename
 
 
 def open_crystal_report(report_filename):
@@ -115,13 +150,19 @@ def define_filter_values(sqlquery):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', dest='search_term')
-    parser.add_argument('-v', '--validate-query', action='store_true', help=u'Testa a query do relatório')
+    parser.add_argument('-v', '--validate-query', action='store_true', help='Testa a query do relatório')
+    parser.add_argument('-l', '--list-query-string', nargs="?", help='Lista a Query String do Relatório/SubRelatórios')
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    for filename in relatorios():
+    
+    if args.list_query_string:
+        list_query_string(args.list_query_string)
+        sys.exit(0)
+    
+    for filename in glob.glob(r"C:\ello\relatorios\**\*.rpt", recursive=True):
         report = open_crystal_report(filename)
         if args.search_term:
             if search(report, filename, args.search_term):
