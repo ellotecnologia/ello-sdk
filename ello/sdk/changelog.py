@@ -14,6 +14,7 @@ from .git import git, get_changes_from, create_version_tag, push_tags, get_last_
 from .text_manipulation import preprocess_commit_messages
 from .version import get_previous_version
 from ello.project import ProjectMetadata
+from ello.chamados import fecha_chamados_por_mensagem_commit
 
 logger = logging.getLogger()
 
@@ -39,6 +40,8 @@ def make_changelog(args):
     # Atualiza informações no repositório
     commit_changelog(metadata.version)
     create_version_tag(metadata)
+
+    fecha_chamados_por_mensagem_commit(changes, metadata.version)
     
     if not args.no_push:
         if push_tags() != 0:

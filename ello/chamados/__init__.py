@@ -1,6 +1,6 @@
 # encoding: utf8
-from __future__ import unicode_literals
-from __future__ import print_function
+
+from .chamados import fecha_chamados_por_mensagem_commit
 
 def inicia_chamado(numero):
     print("Iniciando chamado {}".format(numero))

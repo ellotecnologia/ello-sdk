@@ -2,7 +2,7 @@ import os
 import os.path
 from configparser import ConfigParser
 
-config_filename = os.path.join(os.path.expanduser('~'), 'ello-sdk.ini')
+config_filename = os.path.join(os.path.expanduser('~'), 'ell.ini')
 
 config = ConfigParser()
 config.read(config_filename)
@@ -19,3 +19,7 @@ whatsapp_url     = config.get('whatsapp', 'url', fallback='')
 whatsapp_numbers = [n.strip() for n in config.get('whatsapp', 'notify_numbers', fallback='').split(',')]
 telegram_token = config.get('telegram', 'token', fallback='')
 
+firebird_host     = config.get('firebird', 'host', fallback='127.0.0.1')
+firebird_user     = config.get('firebird', 'user', fallback='sysdba')
+firebird_pass     = config.get('firebird', 'password', fallback='masterkey')
+firebird_database = config.get('firebird', 'database')
