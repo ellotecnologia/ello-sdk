@@ -30,7 +30,7 @@ def crop_message(text):
 
 def remove_marked_messages(text):
     """ Ignorar mensagens de commit que contenham '*' no final """
-    return not re.search(r'\* <[\w ]+>$', text)
+    return not re.search(r'\* <.+>$', text)
 
 
 def remove_issue_number(text):
