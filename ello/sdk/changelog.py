@@ -1,7 +1,3 @@
-# encoding: utf8
-from __future__ import unicode_literals
-from __future__ import print_function
-
 import os
 import sys
 import subprocess
@@ -22,14 +18,26 @@ CHANGELOG_FILE = 'CHANGELOG.txt'
 TMP_CHANGELOG_FILE = os.environ.get('TEMP') + '\\ell_changelog.tmp'
 
 
+def init_args(parser):
+    cmd = parser.add_parser('make-changelog', aliases=['mc'], help='Atualiza o arquivo de changelog')
+    cmd.add_argument('--commit', help='Faz o commit das modificações do changelog no repositório', action='store_true')
+    cmd.add_argument('--create-tag', help='Cria tag de versão', action='store_true')
+    cmd.add_argument('--push', help='Fazer push do changelog', action='store_true')
+    cmd.add_argument('--last-version', help='Última versão lançada')
+    cmd.set_defaults(func=make_changelog)
+
+
 def make_changelog(args):
-    logger.info("Atualizando CHANGELOG.txt")
+    logger.info('Atualizando CHANGELOG.txt')
 
     if not os.path.isfile(CHANGELOG_FILE):
         touch_file(CHANGELOG_FILE)
 
     metadata = ProjectMetadata()
-    previous_version = get_previous_version(metadata)
+    if args.last_version:
+        previous_version = args.last_version
+    else:
+        previous_version = get_previous_version(metadata)
 
     changes = get_changes_from(previous_version)
     changes = preprocess_commit_messages(changes)
@@ -38,34 +46,37 @@ def make_changelog(args):
     merge_temp_with_changelog()
 
     # Atualiza informações no repositório
-    commit_changelog(metadata.version)
-    create_version_tag(metadata)
+    if args.commit:
+        commit_changelog(metadata.version)
+    
+    if args.create_tag:
+        create_version_tag(metadata)
 
     fecha_chamados_por_mensagem_commit(changes, metadata.version)
     
-    if not args.no_push:
+    if args.push:
         if push_tags() != 0:
             logger.info('==> Falha ao fazer push da atualização do changelog <==')
 
 
 def commit_changelog(version):
-    logger.info("Criando commit de atualização de versão...")
+    logger.info('Salvando atualização de versão no repositório...')
     git('add ' + CHANGELOG_FILE)
     git('commit -am "Atualização do changelog ({0})" '.format(version))
 
 
 def generate_temp_changelog(version, changes):
-    current_date = datetime.now().strftime("%d/%m/%Y")
-    headline = "{} - Revisão {}\n".format(current_date, version)
+    current_date = datetime.now().strftime('%d/%m/%Y')
+    headline = '{} - Revisão {}\n'.format(current_date, version)
     with open(TMP_CHANGELOG_FILE, 'w', encoding='latin1') as f:
         f.write(headline)
-        f.write("\n")
+        f.write('\n')
         for line in changes:
             # As instruções de codificação são para corrigir caracteres que não são
             # aceitos no encoding Latin-1
             f.write(line.encode('latin1', errors='replace').decode('latin1'))
-            f.write("\n")
-        f.write("\n")
+            f.write('\n')
+        f.write('\n')
 
 
 def merge_temp_with_changelog():

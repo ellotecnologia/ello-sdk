@@ -4,15 +4,16 @@ import argparse
 
 logging.basicConfig(format='=> %(message)s', level=logging.INFO)
 
+import ello.sdk.changelog
+import ello.notifications
+
 from ello.sdk import config
 from ello.sdk.dependencies import install_dependencies
 from ello.sdk.version import set_version, bump_version
-from ello.sdk.changelog import make_changelog
 from ello.sdk.wiki import update_wiki_pages
 from ello.sdk.git import install_hooks
 from ello.sdk.database import create_new_sql_patch
 from ello.chamados import inicia_chamado
-from ello.notifications import notify_team
 from ello.project import ProjectMetadata, init_project, require_dependency
 
 from ello.tests import update_test_project, generate_test_case
@@ -40,16 +41,12 @@ def main():
     bump_version_cmd.add_argument("--project", nargs='?', help="Caminho do arquivo .dpr")
     bump_version_cmd.set_defaults(func=bump_version)
     
-    make_changelog_cmd = cmd.add_parser("make-changelog", aliases=['mc'], help="Atualiza o arquivo de changelog")
-    make_changelog_cmd.add_argument("-n", "--no-push", help="Nao fazer push do changelog", action="store_true")
-    make_changelog_cmd.set_defaults(func=make_changelog)
+    ello.sdk.changelog.init_args(cmd)
+    ello.notifications.init_args(cmd)
     
     update_wiki_cmd = cmd.add_parser("update-wiki", help="Atualiza páginas do wiki")
     update_wiki_cmd.set_defaults(func=lambda args: update_wiki_pages(ProjectMetadata().name))    
-    
-    notify_team_cmd = cmd.add_parser("notify-team", help="Envia notificação de lançamento de revisão para o time")
-    notify_team_cmd.set_defaults(func=lambda args: notify_team(ProjectMetadata().name))
-    
+   
     install_hooks_cmd = cmd.add_parser("install-hooks", help="Instala hooks do git no projeto atual")
     install_hooks_cmd.set_defaults(func=install_hooks)
     
