@@ -15,9 +15,9 @@ from pygments.token import Token
 
 class MyStyle(Style):
     styles = {
-        Token.String: '#ansigreen bg:#ansiblack',
-        Token.Keyword: '#ansiblue bg:#ansiblack',
-        Token.Number: '#ansired'
+        Token.String: 'ansigreen bg:ansiblack',
+        Token.Keyword: 'ansiblue bg:ansiblack',
+        Token.Number: 'ansired'
     }
 
 lexer = SqlLexer()
