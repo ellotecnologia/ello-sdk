@@ -92,8 +92,12 @@ def acbr_units(unit_name):
     return unit_name.startswith('acbr')
 
 
+def abbrevia_units(unit_name):
+    return unit_name.startswith('Ab')
+
+
 def basic_units(unit_name):
-    unit_list = ['udateutils', 'urecordlock', 'logging', 'umath', 'synacode']
+    unit_list = ['udateutils', 'urecordlock', 'synacode']
     return unit_name.lower() in unit_list
 
 
@@ -150,6 +154,7 @@ def sort_unit_names(unit_names):
     units.extend(list(filter(synapse_units, unit_names)))
     units.extend(list(filter(pcn_units, unit_names)))
     units.extend(list(filter(acbr_units, unit_names)))
+    units.extend(list(filter(abbrevia_units, unit_names)))
     units.extend(list(filter(png_units, unit_names)))
     units.extend(list(filter(excellent_units, unit_names)))
     units.extend(list(filter(other_units, unit_names)))
