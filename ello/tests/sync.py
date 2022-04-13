@@ -115,19 +115,6 @@ def fix_search_path(search_path, new_path):
     return ';'.join(new_search_path)
 
 
-def sync_search_path(sut_project_path, test_project_path):
-    """ Atualiza Search Path do Projeto de Testes de acordo com o SUT
-    """
-    sut_dof = DOFFile(os.path.splitext(sut_project_path)[0] + '.dof')
-    test_dof = DOFFile(os.path.splitext(test_project_path)[0] + '.dof')
-    
-    new_path = os.path.dirname(sut_project_path) + "\\"
-    test_dof.search_path = fix_search_path(sut_dof.search_path, new_path)
-    test_dof.search_path += ';$(COMPONENTES)\\dunit\\src'
-    test_dof.search_path += ';' + os.path.relpath(os.path.dirname(sut_project_path), os.path.dirname(test_project_path))
-    test_dof.save()
-
-
 def update_test_project(args):
     """ Atualiza as units do Projeto de Teste (.dpr) de acordo
         com as units definidas no SUT (.dpr)
@@ -141,5 +128,3 @@ def update_test_project(args):
     new_path = os.path.dirname(sut_project_path) + "\\"
     sut_unit_names = map(lambda l: l.replace("in '", "in '" + new_path), sut_unit_names)
     sync_unit_paths(args.test_project_path, sut_unit_names)
-
-    sync_search_path(sut_abspath, args.test_project_path)
