@@ -16,7 +16,8 @@ def basic_delphi_units(unit_name):
     unit_list = ['windows', 'classes', 'sysutils', 'strutils', 'variants', 
                  'contnrs', 'fmtbcd', 'math', 'inifiles', 'wininet', 'dateutils',
                  'typinfo', 'comobj', 'clipbrd', 'system.ioutils', 'filectrl', 'printers',
-                 'winsock', 'types', 'syncobjs', 'convutils']
+                 'winsock', 'types', 'syncobjs', 'convutils', 'actnman', 'actncolormaps',
+                 'system.classes', 'system.zip']
     return unit_name.lower() in unit_list
 
 
@@ -87,6 +88,11 @@ def pcn_units(unit_name):
            (unit_name.startswith('pmdfe'))
 
 
+def fortesreports_units(unit_name):
+    unit_name = unit_name.lower()
+    return unit_name.startswith('rl')
+
+
 def acbr_units(unit_name):
     unit_name = unit_name.lower()
     return unit_name.startswith('acbr')
@@ -97,7 +103,7 @@ def abbrevia_units(unit_name):
 
 
 def basic_units(unit_name):
-    unit_list = ['udateutils', 'urecordlock', 'synacode']
+    unit_list = ['udateutils', 'urecordlock']
     return unit_name.lower() in unit_list
 
 
@@ -153,6 +159,7 @@ def sort_unit_names(unit_names):
     units.extend(list(filter(jcl_units, unit_names)))
     units.extend(list(filter(synapse_units, unit_names)))
     units.extend(list(filter(pcn_units, unit_names)))
+    units.extend(list(filter(fortesreports_units, unit_names)))
     units.extend(list(filter(acbr_units, unit_names)))
     units.extend(list(filter(abbrevia_units, unit_names)))
     units.extend(list(filter(png_units, unit_names)))
