@@ -1,4 +1,3 @@
-# encoding: utf8
 import re
 import functools
 
@@ -13,7 +12,8 @@ def preprocess_commit_messages(messages):
     messages = filter(lambda x: not ignore_line(x), messages)
     messages = sorted(messages, key=functools.cmp_to_key(compara))
     messages = map(lambda text: '- ' + text, messages)
-    return list(messages)
+    messages = list(messages) or ['- Revisão de compatibilidade <Clayton>']
+    return messages
 
 
 def crop_message(text):
