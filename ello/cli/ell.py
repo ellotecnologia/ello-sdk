@@ -5,20 +5,19 @@ import argparse
 logging.basicConfig(format='=> %(message)s', level=logging.INFO)
 
 import ello.sdk.changelog
+import ello.sdk.version
 import ello.notifications
+import ello.project.deployment
 
 from ello.sdk import config
 from ello.sdk.dependencies import install_dependencies
-from ello.sdk.version import set_version, bump_version
 from ello.sdk.wiki import update_wiki_pages
 from ello.sdk.git import install_hooks
 from ello.sdk.database import create_new_sql_patch
 from ello.chamados import inicia_chamado
 from ello.project import ProjectMetadata, init_project, require_dependency
-
 from ello.tests import update_test_project, generate_test_case
 
-from delphi import Project
 from delphi.dof import clear_dof_history
 from delphi.compiler import Compiler, RELEASE_MODE, DEBUG_MODE
 
@@ -33,14 +32,8 @@ def main():
 
     #cmd.add_parser("require", help="Adiciona uma dependência ao projeto")
     
-    set_version_cmd = cmd.add_parser("set-version", help="Define versao do projeto")
-    set_version_cmd.add_argument("version", help="Numero da versao")
-    set_version_cmd.set_defaults(func=set_version)
-    
-    bump_version_cmd = cmd.add_parser("bump-version", aliases=['bv'], help="Incrementa a versão do projeto")
-    bump_version_cmd.add_argument("--project", nargs='?', help="Caminho do arquivo .dpr")
-    bump_version_cmd.set_defaults(func=bump_version)
-    
+    ello.project.deployment.init_args(cmd)
+    ello.sdk.version.init_args(cmd)
     ello.sdk.changelog.init_args(cmd)
     ello.notifications.init_args(cmd)
     

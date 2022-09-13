@@ -6,8 +6,7 @@ import fdb
 
 from ello.sdk import config
 
-ID_RESPONSAVEL = 10
-ID_RESPONSAVEL_PADRAO = 5 # GUSTAVO
+ID_RESPONSAVEL_PADRAO = 17 # MAURICIO
 
 connection = None
 
@@ -48,11 +47,12 @@ class Chamado:
 
 
     @staticmethod
-    def localiza(numero_chamado, id_responsavel):
-        cursor = obtem_cursor()
+    def localiza(numero_chamado):
+        connection = get_connection()
+        cursor = connection.cursor()
         cursor.execute("SELECT IdOperador, Responsavel "
                        "FROM TSolSolicitacao "
-                       "WHERE IdSolicitacao={} AND Responsavel={}".format(numero_chamado, ID_RESPONSAVEL))
+                       "WHERE IdSolicitacao={}".format(numero_chamado))
         row = cursor.fetchone()
         if not row:
             return ChamadoNulo(cursor)
@@ -70,46 +70,43 @@ class ChamadoNulo(Chamado):
         pass
 
 
+def fecha_chamados_por_mensagem_commit(mensagens, release):
+    connection = get_connection()
+    for mensagem in mensagens:
+        numeros_chamados = extrai_numeros_chamados(mensagem)
+        if not numeros_chamados:
+            continue
+        for numero_chamado in numeros_chamados:
+            chamado = Chamado.localiza(numero_chamado)
+            chamado.finaliza('Resolvido no release {}'.format(release))
+    connection.commit()
+
+
 def obtem_msg_ultimo_commit():
     cmd = "git log -1 --format=%s%n%b"
     p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     return p.communicate()[0].decode("utf8")
 
 
-def extrai_numero_chamado(msg_commit):
-    match = re.search("#(\d+)", msg_commit)
+def extrai_numeros_chamados(msg_commit):
+    """Retorna o número (ou números) de chamados contidos em uma mensagem de commit"""
+    match = re.search(r"(?P<ids>\(\#\d+(\, #\d+)*\)?)", msg_commit)
     if match:
-        return match.group(1)
+        numeros_chamados = match.group('ids')
+        return re.findall(r'#(\d+)', numeros_chamados)
     else:
         return None
 
 
-def obtem_cursor():
+def get_connection():
     global connection
     if not connection:
         connection = fdb.connect(user=config.firebird_user, password=config.firebird_pass, host=config.firebird_host, database=config.firebird_database)
-    return connection.cursor()
-
-
-def fecha_chamados_por_mensagem_commit(mensagens, release):
-    for mensagem in mensagens:
-        numero_chamado = extrai_numero_chamado(mensagem)
-        if not numero_chamado:
-            continue
-        chamado = Chamado.localiza(numero_chamado, ID_RESPONSAVEL)
-        chamado.finaliza('Resolvido no release {}'.format(release))
-        connection.commit()
+    return connection
 
 
 if __name__ == "__main__":
-    msg_commit = obtem_msg_ultimo_commit().split("\n")
-    assunto = msg_commit[0]
-    mensagem = "\n".join(msg_commit[1:]).strip()
-
-    numero_chamado = extrai_numero_chamado(assunto)
-    if not numero_chamado:
-        sys.exit()
-        
-    chamado = Chamado.localiza(numero_chamado, ID_RESPONSAVEL)
-    chamado.finaliza(mensagem)
-    connection.commit()
+    #numeros = extrai_numeros_chamados('Mensagem teste (#23324)')
+    #numeros = extrai_numeros_chamados('Mensagem teste (#23324, #23182)')
+    numeros = extrai_numeros_chamados('Mensagem teste #9999 teste (#23324, #23182, #1234)')
+    print(numeros)

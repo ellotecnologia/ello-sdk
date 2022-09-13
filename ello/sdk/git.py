@@ -59,11 +59,11 @@ def get_sorted_tags():
     return tags
 
 
-def get_changes_from(from_tag):
+def get_changes_from(from_tag, from_path):
     """ Retorna uma lista com as mensagens no formato:
         ['- msg <author>', '- msg <author>', ...]
     """
-    cmd = ['git', 'log', '--reverse', '--first-parent', '--no-merges', '--pretty=format:%B-> author: <%an>', '{}..'.format(from_tag), '.']
+    cmd = ['git', 'log', '--reverse', '--first-parent', '--no-merges', '--pretty=format:%B-> author: <%an>', '{}..'.format(from_tag), from_path]
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     git_output = p.communicate()[0].splitlines()
     git_output = map(lambda text: text.decode('utf8'), git_output)
