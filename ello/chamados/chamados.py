@@ -70,7 +70,7 @@ class ChamadoNulo(Chamado):
         pass
 
 
-def fecha_chamados_por_mensagem_commit(mensagens, release):
+def fecha_chamados_por_mensagem_commit(mensagens: list[str], release: str) -> None:
     connection = get_connection()
     for mensagem in mensagens:
         numeros_chamados = extrai_numeros_chamados(mensagem)
@@ -105,8 +105,5 @@ def get_connection():
     return connection
 
 
-if __name__ == "__main__":
-    #numeros = extrai_numeros_chamados('Mensagem teste (#23324)')
-    #numeros = extrai_numeros_chamados('Mensagem teste (#23324, #23182)')
-    numeros = extrai_numeros_chamados('Mensagem teste #9999 teste (#23324, #23182, #1234)')
-    print(numeros)
+# if __name__ == "__main__":
+    # fecha_chamados_por_mensagem_commit(['Chamado concluído (#23291)'], '0.0.0.1')

@@ -18,6 +18,7 @@ def init_args(parser: ArgumentParser) -> None:
 
     cmd = parser.add_parser("set-version", help="Define versao do projeto")
     cmd.add_argument("version", help="Numero da versao")
+    cmd.add_argument("--project", nargs='?', help="Caminho do arquivo .dpr")
     cmd.set_defaults(func=set_version)
     
 
@@ -61,8 +62,15 @@ def set_version(args: ArgumentParser) -> None:
 
     # Incrementa a versão no Makefile
     makefile = os.path.join(project.path, 'Makefile')
+    makefile2 = os.path.join(project.path, 'Makefile_')
     if os.path.isfile(makefile):
         _update_makefile_version(makefile, new_version)
+    elif os.path.isfile(makefile2):
+        _update_makefile_version(makefile2, new_version)
+
+    for p in project.dependent_projects:
+        ns = Namespace(project = os.path.join(project.path, p), version=args.version)
+        set_version(ns)
 
 
 def increment_version(project: ProjectMetadata, previous_version: str) -> str:
