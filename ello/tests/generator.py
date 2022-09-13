@@ -25,7 +25,7 @@ type
 
 implementation
 
-uses UFirebird;
+uses ExlFirebird;
 
 { T<tested_unit>Tests }
 
@@ -72,7 +72,7 @@ type
 
 implementation
 
-uses UFirebird;
+uses ExlFirebird;
 
 { T<tested_unit>_Tests }
 
@@ -107,6 +107,7 @@ def generate_test_case(args):
     else:
         test_project = args.dpr or 'tests/Integration/IntegrationTests.dpr'
         test_unit_name = 'U' + sut[1:] + 'Tests'
+        sut = sut[1:]
         test_template = TEST_TEMPLATE
      
     tests_path = os.path.dirname(test_project)
