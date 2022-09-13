@@ -9,7 +9,66 @@ import glob
 import pywintypes
 from win32com.client import Dispatch
 
-SUBREPORT_KIND = 5
+# CRAreaKind
+crReportHeader = 1
+crPageHeader   = 2
+crGroupHeader  = 3
+crDetail       = 4
+crGroupFooter  = 5
+crPageFooter   = 7
+crReportFooter = 8
+
+# CRObjectKind
+crFieldObject     = 1
+crTextObject      = 2
+crLineObject      = 3
+crBoxObject       = 4
+crSubreportObject = 5
+crOleObject       = 6
+crGraphObject     = 7
+crCrossTabObject  = 8
+crBlobFieldObject = 9
+crMapObject       = 10
+crOlapGridObject  = 11
+
+CRPaperOrientation = {
+    0: 'crDefaultPaperOrientation',
+    2: 'crLandscape',
+    1: 'crPortrait'
+}
+
+CRPaperSize = {
+    9: 'crPaperA4'
+}
+
+CRAreaKind = {
+    crReportHeader : 'crReportHeader',
+    crPageHeader   : 'crPageHeader',
+    crGroupHeader  : 'crGroupHeader',
+    crDetail       : 'crDetail',
+    crGroupFooter  : 'crGroupFooter',
+    crPageFooter   : 'crPageFooter',
+    crReportFooter : 'crReportFooter'
+}
+
+CRObjectKind = {
+    crFieldObject     : 'crFieldObject',
+    crTextObject      : 'crTextObject',
+    crLineObject      : 'crLineObject',
+    crBoxObject       : 'crBoxObject',
+    crSubreportObject : 'crSubreportObject',
+    crOleObject       : 'crOleObject',
+    crGraphObject     : 'crGraphObject',
+    crCrossTabObject  : 'crCrossTabObject',
+    crBlobFieldObject : 'crBlobFieldObject',
+    crMapObject       : 'crMapObject',
+    crOlapGridObject  : 'crOlapGridObject'
+}
+
+def search_in_all_reports(search_term):
+    for filename in glob.glob('C:\\Ello\\relatorios\\**\\*.rpt', recursive=True):
+        search_in_report(search_term, filename)
+
 
 def search_in_report(search_term, report_file):
     app = Dispatch('CrystalRunTime.Application')
@@ -18,9 +77,15 @@ def search_in_report(search_term, report_file):
     if _search_in_report(search_term, report):
         print(f'Found in "{report_file}"')
 
+    found, formula_field = search_formula_fields(search_term, report)
+    if found:
+        print(f'Found in "{report_file}", Formula Field "{formula_field}"')
+        return
+    
+    # Search term inside sub-reports
     for section in report.Sections:
         for report_object in section.ReportObjects:
-            if report_object.Kind == SUBREPORT_KIND:
+            if report_object.Kind == crSubreportObject:
                 subreport = report_object.OpenSubreport()
                 if _search_in_report(search_term, subreport):
                     print(f'Found in "{report_file}" section ' + report_object.Name)
@@ -39,17 +104,12 @@ def _search_in_report(search_term, report):
     return False
 
 
-def search_in_all_reports(search_term):
-    for filename in glob.glob(r"C:\ello\relatorios\**\*.rpt", recursive=True):
-        search_in_report(search_term, filename)
-
-
 def list_query_string(filename):
     report = open_crystal_report(filename)
     print(report.sqlquerystring)
     for section in report.Sections:
         for report_object in section.ReportObjects:
-            if report_object.Kind == SUBREPORT_KIND:
+            if report_object.Kind == crSubreportObject:
                 subreport = report_object.OpenSubreport()
                 subreport.enableParameterPrompting = False
                 print(subreport.sqlquerystring)
@@ -77,6 +137,16 @@ def search(report, filename, search_term):
         log(u"Erro => ({0}) {1}".format(filename, e))
         result = False
     return result
+
+
+def search_formula_fields(search_term, report):
+    """Procura pelo termo 'search_term' em todo os Formula Fields do relatório"""
+    for ff in report.FormulaFields:
+        #print(f'Formula Field: {ff.Name } = {ff.Text}')
+        #print(f'Searching in Formula Field: {ff.Name } = {ff.Text}')
+        if re.search(search_term, ff.Text, flags=re.I):
+            return (True, ff.Name)
+    return (False, 'not found')
 
 
 def validate_report_query_function():
@@ -174,9 +244,32 @@ def main():
             sys.exit(0)
 
 
+def show_report_structure(report_name):
+    """Exibe a estrutura de um relatório Crystal de forma textual"""
+    report = open_crystal_report(report_name)
+    print('PaperOrientation:', CRPaperOrientation[report.PaperOrientation])
+    print('PaperSize:', CRPaperSize[report.PaperSize])
+    
+    for area in report.Areas:
+        if (area.Kind == crGroupHeader) or (area.Kind == crGroupFooter):
+            print(f'{CRAreaKind[area.Kind]}: {area.Name} GroupConditionField: {area.GroupConditionField.Name}')
+        else:
+            print(f'{CRAreaKind[area.Kind]}: {area.Name}')
+        
+        for section in area.Sections:
+            print(f'\tSection {section.Number}: {section.Name} Height: {section.Height} Width: {section.Width} Suppress: {section.Suppress}')
+            for obj in section.ReportObjects:
+                if obj.Kind == crTextObject:
+                    print(f'\t\t{CRObjectKind[obj.Kind]}: {obj.Name} Text: {obj.Text} Top: {obj.Top} Left: {obj.Left}')
+                    for fe in obj.FieldElements:
+                        print(f'\t\t\t{fe.FieldDefinition.Name}')
+                elif obj.Kind == crFieldObject:
+                    print(f'\t\t{CRObjectKind[obj.Kind]}: {obj.Name} FieldName: {obj.Field.Name} Top: {obj.Top} Left: {obj.Left}')
+                else:
+                    print(f'\t\t{CRObjectKind[obj.Kind]}: {obj.Name} Top: {obj.Top} Left: {obj.Left}')
+    print(report.sqlquerystring)
+
+                    
 if __name__=="__main__":
-    main()
-    #for nome_arquivo in relatorios():
-    #    relatorio = open_crystal_report(nome_arquivo)
-    #    print(nome_arquivo)
-    #    print(relatorio.sqlquerystring)
+    #main()
+    show_report_structure(r'C:\ello\relatorios\OrdemFechamento.rpt')
