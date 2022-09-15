@@ -68,10 +68,6 @@ def set_version(args: ArgumentParser) -> None:
     elif os.path.isfile(makefile2):
         _update_makefile_version(makefile2, new_version)
 
-    for p in project.dependent_projects:
-        ns = Namespace(project = os.path.join(project.path, p), version=args.version)
-        set_version(ns)
-
 
 def increment_version(project: ProjectMetadata, previous_version: str) -> str:
     """ Incrementa versão de acordo com schema de versionamento utilizado pelo projeto """
