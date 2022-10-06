@@ -12,7 +12,7 @@ def preprocess_commit_messages(messages):
     messages = filter(lambda x: not ignore_line(x), messages)
     messages = sorted(messages, key=functools.cmp_to_key(compara))
     messages = map(lambda text: '- ' + text, messages)
-    messages = list(messages) or ['- Revisão de compatibilidade <Clayton>']
+    messages = list(messages) or ['- Revisão de compatibilidade <Elloisa>']
     return messages
 
 
@@ -89,10 +89,7 @@ def apply_some_fixups(text):
     """
     Remove alguns hábitos de elaboração de mensagens
     """
-    # Corrige mania do Bruno de colar o número do chamado a mensagem
-    text = re.sub('(\w|\d)\(#', '\\1 (#', text)
-    
-    # Corrige algumas manias do Paulinho
+    text = re.sub('(\w|\d)\(#', '\\1 (#', text) # Adiciona um espaço antes do parêntese do número do chamado
     text = re.sub('pequen(o|a|os|as) (ajust.|corre..o|corre..es|mudan.a)', 'Correção', text, flags=re.I)
     text = re.sub('nov(o|a) (ajust.|corre..o|mudan.a)', 'Correção', text, flags=re.I)
     text = re.sub('um correção', 'uma correção', text, flags=re.I)
@@ -102,8 +99,6 @@ def apply_some_fixups(text):
     text = re.sub('program(ei|ado) para', 'Aprimoramento para', text, flags=re.I)
     text = re.sub('^modifi(quei|cado) para', 'Aprimoramento para', text, flags=re.I)
     text = re.sub('^implement(ei|ado) para', 'Aprimoramento para', text, flags=re.I)
-
-    # Corrige algumas manias de todo programador
     text = re.sub('(na|no) grid', 'na grade', text, flags=re.I)
     text = re.sub('no form ', 'na tela ', text, flags=re.I)
     text = re.sub('o form ', 'a tela ', text, flags=re.I)
@@ -113,13 +108,13 @@ def apply_some_fixups(text):
     text = re.sub('aprimoramento o', 'Aprimoramento no', text, flags=re.I)
     text = re.sub('otimiza..o (no|na|para)', 'Aprimoramento \\1', text, flags=re.I)
     text = re.sub('reestrutura..o (no|na)', 'Aprimoramento \\1', text, flags=re.I)
-
     text = re.sub('^(ajustado (o|a)*)', 'Aprimoramento: \\1', text, flags=re.I)
     text = re.sub('^(alterado (o|a|para))', 'Aprimoramento: \\1', text, flags=re.I)
     text = re.sub('^(removido (o|a)*)', 'Aprimoramento: \\1', text, flags=re.I)
     text = re.sub('^(adicionado (o|a)*)', 'Aprimoramento: \\1', text, flags=re.I)
     text = re.sub('^(coloquei (o|a|os|as|um|uma)*)', 'Aprimoramento: \\1', text, flags=re.I)
     text = re.sub('^(criado (o|a|os|as|um|uma)*)', 'Aprimoramento: \\1', text, flags=re.I)
+    text = re.sub(r'\[(.+)\]([^(]|$)', r'"\1"', text, flags=re.I) # Remove links markdown mal formados
     
     text = text[0].upper() + text[1:]
     return text

@@ -1,7 +1,5 @@
-# encoding: utf8
-from __future__ import unicode_literals
-
 import unittest
+
 from ello.sdk.text_manipulation import (
     apply_some_fixups, 
     ignore_line,
@@ -43,7 +41,15 @@ class TextManipulationTests(unittest.TestCase):
         original_text = "Lançamento á colaboradores ajustado para sugerir a descricao do lancamento de folha para 'SALARIO REFERENTE: XX/XXXX"
         expected_text = "Lançamento á colaboradores modificado para sugerir a descricao do lancamento de folha para 'SALARIO REFERENTE: XX/XXXX"
         self.assertEqual(expected_text, apply_some_fixups(original_text))
-        
+
+        original_text = 'Correção em xyz [a, b, c]'
+        expected_text = 'Correção em xyz "a, b, c"'
+        self.assertEqual(expected_text, apply_some_fixups(original_text))
+
+        original_text = 'Correção em xyz [link](http://teste.com)'
+        expected_text = 'Correção em xyz [link](http://teste.com)'
+        self.assertEqual(expected_text, apply_some_fixups(original_text))
+
     def test_ignore_line(self):
         self.assertFalse(ignore_line("Melhoria no processo de xxx"))
         self.assertFalse(ignore_line("Aprimoramento na exibição de valores unitários quando o produto utiliza mais de duas casas decimais"))
