@@ -4,7 +4,7 @@ import subprocess
 import glob
 import re
 
-EDITOR = 'notepad2.exe' #os.environ.setdefault("EDITOR", "notepad.exe")
+EDITOR = os.environ.setdefault("EDITOR", "notepad.exe")
 PATCHES_PATH = "database\\patches"
 
 

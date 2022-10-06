@@ -13,30 +13,37 @@ from delphi.resource import ResourceFile
 
 def init_args(parser: ArgumentParser) -> None:
     cmd = parser.add_parser("bump-version", aliases=['bv'], help="Incrementa a versão do projeto")
-    cmd.add_argument("--project", nargs='?', help="Caminho do arquivo .dpr")
-    cmd.set_defaults(func=bump_version)
+    cmd.add_argument("--project", nargs='?', help="Caminho do arquivo .dpr", default='')
+    cmd.set_defaults(func=_bump_version)
 
     cmd = parser.add_parser("set-version", help="Define versao do projeto")
     cmd.add_argument("version", help="Numero da versao")
-    cmd.add_argument("--project", nargs='?', help="Caminho do arquivo .dpr")
-    cmd.set_defaults(func=set_version)
+    cmd.set_defaults(func=_set_version)
     
 
-def bump_version(args: ArgumentParser) -> None:
+def _bump_version(args: ArgumentParser) -> None:
+    project = ProjectMetadata(args.project)
+    bump_version(project)
+
+
+def _set_version(args: ArgumentParser) -> None:
+    if 'project' in args:
+        project = ProjectMetadata(args.project)
+    else:
+        project = ProjectMetadata()
+    set_version(project, args.version)
+
+
+def bump_version(project: ProjectMetadata) -> None:
     """ Incrementa a versão do projeto """
-    project = ProjectMetadata(args.project)
-    args.version = increment_version(project, project.version)
-    set_version(args)
+    new_version = increment_version(project, project.version)
+    set_version(project, new_version)
     for p in project.dependent_projects:
-        ns = Namespace(project = os.path.join(project.path, p))
-        bump_version(ns)
+        bump_version(ProjectMetadata(os.path.join(project.path, p)))
 
 
-def set_version(args: ArgumentParser) -> None:
+def set_version(project, new_version) -> None:
     """ Define a versao do projeto """
-    project = ProjectMetadata(args.project)
-    new_version = args.version
-    
     logging.info('Atualizando {} para {}'.format(project.name, new_version))
 
     # Incrementa a versão do resource file caso houver algum na raiz do projeto

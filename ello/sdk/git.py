@@ -21,23 +21,6 @@ def get_last_tag():
     return last_tag.decode('latin1')
 
 
-def create_version_tag(project_metadata):
-    if project_metadata.tag_prefix:
-        tag_name = project_metadata.tag_prefix + project_metadata.version
-    else:
-        tag_name = project_metadata.version
-    logger.info("Criando tag {}".format(tag_name))
-    git("tag {0}".format(tag_name))
-
-
-def push_tags():
-    logger.info("Enviando atualizações para o repositório remoto (commits, tags)...")
-    exit_code = git("push")
-    if exit_code == 0:
-        exit_code = git("push --tags")
-    return exit_code
-
-
 def get_latest_tag():
     """ Get last defined tag from git log
     """
