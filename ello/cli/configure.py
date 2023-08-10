@@ -18,7 +18,7 @@ from ello.sdk.git import git, repo_has_pending_changes
 logger = logging.getLogger()
 
 PASTA_COMPONENTES = os.getenv('COMPONENTES')
-PASTA_PROJETO_ELLO = PASTA_COMPONENTES + "\\.." 
+PASTA_PROJETOS = os.getenv('PROJETOS')
 FNULL = open(os.devnull, 'w')
 
 
@@ -41,7 +41,7 @@ def atualiza_dependencias_package_json():
         package_name = dependency
         codigo_hash = dependencies[dependency]
         if re.match('ello', package_name, re.I):
-            checkout_pacote(package_name, PASTA_PROJETO_ELLO, codigo_hash)
+            checkout_pacote(package_name, PASTA_PROJETOS, codigo_hash)
         else:
             checkout_pacote(package_name, PASTA_COMPONENTES, codigo_hash)
 
@@ -64,7 +64,7 @@ def atualiza_dependencias_modo_retrocompatibilidade():
                 checkout_pacote('PngComponents', PASTA_COMPONENTES, codigo_hash)
             if re.match('^Ello', linha):
                 codigo_hash = extrai_hash_do_pacote(arquivo_leiame)
-                checkout_pacote('ello', PASTA_PROJETO_ELLO, codigo_hash)
+                checkout_pacote('ello', PASTA_PROJETOS, codigo_hash)
 
 
 def extrai_hash_do_pacote(arquivo):
@@ -81,7 +81,7 @@ def freeze_dependencies():
     for package_name in dependencies:
         package_path = PASTA_COMPONENTES
         if package_name.lower() == 'ello': # ello is not a package, it's a project
-            package_path = PASTA_PROJETO_ELLO
+            package_path = PASTA_PROJETOS
         dependencies[package_name] = get_last_git_hash('{}\\{}'.format(package_path, package_name)).decode('latin1')
 
     with open('package.json', 'w', encoding='utf-8') as f:
