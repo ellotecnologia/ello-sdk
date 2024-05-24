@@ -4,6 +4,8 @@ import subprocess
 import re
 import fdb
 
+from typing import List
+
 from ello.sdk import config
 
 ID_RESPONSAVEL_PADRAO = 17 # MAURICIO
@@ -70,7 +72,7 @@ class ChamadoNulo(Chamado):
         pass
 
 
-def fecha_chamados_por_mensagem_commit(mensagens: list[str], release: str) -> None:
+def fecha_chamados_por_mensagem_commit(mensagens: List[str], release: str) -> None:
     connection = get_connection()
     for mensagem in mensagens:
         numeros_chamados = extrai_numeros_chamados(mensagem)
