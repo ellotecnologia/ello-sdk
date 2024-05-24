@@ -17,6 +17,7 @@ def basic_delphi_units(unit_name):
                  'contnrs', 'fmtbcd', 'math', 'inifiles', 'wininet', 'dateutils',
                  'typinfo', 'comobj', 'clipbrd', 'system.ioutils', 'filectrl', 'printers',
                  'winsock', 'types', 'syncobjs', 'convutils', 'actnman', 'actncolormaps',
+                 'shlobj', 'xmldoc', 'xmlintf',
                  'system.classes', 'system.zip']
     return unit_name.lower() in unit_list
 
@@ -29,8 +30,8 @@ def main_delphi_units(unit_name):
 
 def gui_delphi_units(unit_name):
     unit_list = ['buttons', 'controls', 'comctrls', 'toolwin', 'dialogs', 'extctrls', 
-                 'graphics', 'menus', 'stdctrls', 'grids', 'dbgrids', 
-                 'actnlist', 'imglist', 'jpeg']
+                 'graphics', 'menus', 'stdctrls', 'checklst', 'grids', 'dbgrids', 
+                 'actnlist', 'imglist', 'jpeg', 'vcl.graphutil']
     return unit_name.lower() in unit_list
 
 
@@ -93,6 +94,9 @@ def fortesreports_units(unit_name):
     return unit_name.startswith('rl')
 
 
+def acbr_terceiros_units(unit_name):
+    return unit_name.lower() in ['jsons', 'jsonsutilsex']
+
 def acbr_units(unit_name):
     unit_name = unit_name.lower()
     return unit_name.startswith('acbr')
@@ -110,7 +114,7 @@ def basic_units(unit_name):
 def excellent_units(unit_name):
     unit_list = [
         'ufirebird', 'uquerybuilder', 'uactiverecord', 'speedbuttonstacked',
-        'labevelell', 'stringutils'
+        'labevelell', 'stringutils', 'regexpr'
     ]
     unit_name = unit_name.lower()
     return unit_name.startswith('ell') or \
@@ -160,6 +164,7 @@ def sort_unit_names(unit_names):
     units.extend(list(filter(synapse_units, unit_names)))
     units.extend(list(filter(pcn_units, unit_names)))
     units.extend(list(filter(fortesreports_units, unit_names)))
+    units.extend(list(filter(acbr_terceiros_units, unit_names)))
     units.extend(list(filter(acbr_units, unit_names)))
     units.extend(list(filter(abbrevia_units, unit_names)))
     units.extend(list(filter(png_units, unit_names)))
