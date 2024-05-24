@@ -74,7 +74,7 @@ def search_in_report(search_term, report_file):
     app = Dispatch('CrystalRunTime.Application')
     report = app.OpenReport(report_file)
     
-    if _search_in_report(search_term, report):
+    if _search_in_report(search_term, report, report_file):
         print(f'Found in "{report_file}"')
 
     found, formula_field = search_formula_fields(search_term, report)
@@ -87,21 +87,19 @@ def search_in_report(search_term, report_file):
         for report_object in section.ReportObjects:
             if report_object.Kind == crSubreportObject:
                 subreport = report_object.OpenSubreport()
-                if _search_in_report(search_term, subreport):
+                if _search_in_report(search_term, subreport, report_file):
                     print(f'Found in "{report_file}" section ' + report_object.Name)
 
 
-def _search_in_report(search_term, report):
+def _search_in_report(search_term, report, report_filename):
     report.enableParameterPrompting = False
-    
-    try:
-        if search_term.lower() in report.sqlquerystring.lower():
-            return True
-    except pywintypes.com_error as e:
-        #print(f'Error in "{report_file}":\n\t{e.args}')
-        print(f'Error:\n\t{e.args}')
 
-    return False
+    search_term = r'\b' + search_term + r'\b'
+    try:
+        return bool(re.search(search_term, report.sqlquerystring, flags=re.I))  
+    except pywintypes.com_error as e:
+        print(f'Error in "{report_filename}":\n\t{e.args}')
+        return False
 
 
 def list_query_string(filename):
@@ -131,12 +129,12 @@ def open_crystal_report(report_filename):
 def search(report, filename, search_term):
     """ Faz a busca de um termo na Query String do relatório
     """
+    search_term = r'\b' + search_term + r'\b'
     try:
-        result = re.search(search_term, report.sqlquerystring, flags=re.I)
+        return bool(re.search(search_term, report.sqlquerystring, flags=re.I))
     except pywintypes.com_error as e:
         log(u"Erro => ({0}) {1}".format(filename, e))
-        result = False
-    return result
+        return False
 
 
 def search_formula_fields(search_term, report):
