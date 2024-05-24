@@ -34,11 +34,11 @@ def get_latest_tag():
 
 
 def get_sorted_tags():
-    """ Returns a list of tags sorted by date (oldest first) """
-    cmd = "git for-each-ref --sort=creatordate --format '%(refname)' refs/tags"
+    """ Returns a list of tags, reachable from the current branch, sorted by date (oldest first) """
+    cmd = "git tag --sort=committerdate --merged"
     p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
     lines = p.communicate()[0].decode('latin1')
-    tags = list(map(lambda t: t.replace('refs/tags/', ''), lines.splitlines()))
+    tags = lines.splitlines()
     return tags
 
 
