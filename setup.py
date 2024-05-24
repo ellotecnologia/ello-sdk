@@ -12,7 +12,7 @@ setup(
     description=description,
     install_requires = [
         'fdb',
-        'dokuwiki==1.2',
+        'dokuwiki==1.3.3',
         'requests',
         'colorama',
         'pyperclip',

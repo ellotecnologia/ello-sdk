@@ -1,6 +1,3 @@
-# encoding: utf8
-from __future__ import unicode_literals
-
 import sys
 import re
 import logging
@@ -13,8 +10,8 @@ from ello.sdk import git
 
 logger = logging.getLogger()
 
-WIKI_URL = 'http://wiki.ellotecnologia.net.br'
-SITE_URL = 'http://www.ellotecnologia.net.br'
+WIKI_URL = 'https://wiki.ellotecnologia.com'
+SITE_URL = 'https://www.ellotecnologia.com'
 
 def atualiza_pagina_downloads(wiki, versao):
     logger.info('Atualizando links de download do wiki... (%s)' % versao)
@@ -69,16 +66,16 @@ def create_page_contents(project_name):
 def update_wiki_pages(project_name):
     logger.info('Atualizando wiki...')
     try:
-        wiki = dokuwiki.DokuWiki(WIKI_URL, config.wiki_user, config.wiki_password)
-    except:
-        logger.info('Erro ao tentar logar no DokuWiki!')
+        wiki = dokuwiki.DokuWiki(WIKI_URL, config.wiki_user, config.wiki_password, cookieAuth=True)
+    except Exception as e:
+        logger.info('Erro ao tentar logar no DokuWiki! {} ({}, {})'.format(e, config.wiki_user, config.wiki_password))
         return
     versao = git.get_latest_tag()
     try:
         #atualiza_pagina_downloads(wiki, versao)
         atualiza_changelog(wiki, project_name)
-    except dokuwikixmlrpc.DokuWikiXMLRPCError:
-        logger.info('Erro ao atualizar o wiki!')
+    except Exception as e:
+        logger.info('Erro ao atualizar o wiki! {}'.format(e))
 
 
 if __name__=="__main__":
