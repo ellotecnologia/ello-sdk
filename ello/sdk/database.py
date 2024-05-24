@@ -10,7 +10,8 @@ PATCHES_PATH = "database\\patches"
 
 def create_new_sql_patch(args):
     next_patch = get_next_patch_filename()
-    notepad = subprocess.Popen([EDITOR, os.path.join(PATCHES_PATH, next_patch)])
+    cmd = EDITOR + ' ' + os.path.join(PATCHES_PATH, next_patch)
+    subprocess.call(cmd)
 
     
 def get_next_patch_filename():

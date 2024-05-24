@@ -136,6 +136,7 @@ class ProjectMetadata:
             tags = filter(lambda t: t.startswith(self.tag_prefix), tags)
         else:
             tags = filter(lambda t: '/' not in t, tags)
+            tags = filter(lambda t: '-' not in t, tags)
         return list(tags)[-1]
 
     def texto_ultima_revisao(self):
