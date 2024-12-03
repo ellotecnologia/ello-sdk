@@ -1,4 +1,4 @@
-requests==2.25.1
+requests==2.31.0
 telepot==12.7
 pywin32==301
 dokuwiki==1.3.3
