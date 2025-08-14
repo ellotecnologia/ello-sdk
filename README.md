@@ -55,3 +55,11 @@ notify_numbers = 6692380000, 6692330000, 6699020000
 [telegram]
 token = 000000000:0000000-000000000000000000000000000
 ```
+
+## Erro de validação SSL ao enviar mensagem do telegram
+
+O pacote telepot só funciona com uma versão mais antiga da urllib3.
+
+```
+pip3 install urllib3==1.24.1
+```
