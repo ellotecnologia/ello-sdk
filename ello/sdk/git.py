@@ -81,7 +81,7 @@ def install_hooks(args):
 
 def repo_has_pending_changes():
     """ Retorna 'True' caso o repositório atual possua modificações não commitadas """
-    return_code = subprocess.call("git diff-index --quiet HEAD --", stdout=FNULL, stderr=subprocess.STDOUT)
+    return_code = subprocess.call("git diff-index --quiet HEAD --", stdout=FNULL, stderr=subprocess.STDOUT, shell=True)
     return return_code != 0
 
 
