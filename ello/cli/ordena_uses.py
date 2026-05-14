@@ -18,13 +18,18 @@ def basic_delphi_units(unit_name):
                  'typinfo', 'comobj', 'clipbrd', 'system.ioutils', 'filectrl', 'printers',
                  'winsock', 'types', 'syncobjs', 'convutils', 'actnman', 'actncolormaps',
                  'shlobj', 'xmldoc', 'xmlintf',
-                 'system.classes', 'system.zip']
-    return unit_name.lower() in unit_list
+                 'system.classes', 'system.zip', 'system.regularexpressions']
+    return (
+        (unit_name.lower() in unit_list)
+        or
+        (unit_name.lower().startswith('system.'))
+    )
 
 
 def main_delphi_units(unit_name):
     unit_list = ['forms', 'messages', 'activex', 'mshtml', 'idcodermime', 'maskutils', 
-                 'shellapi', 'xpman', 'teengine', 'series', 'chart', 'teeprocs', 'extdlgs']
+                 'shellapi', 'xpman', 'teengine', 'series', 'chart', 'teeprocs', 'extdlgs',
+                 'registry']
     return unit_name.lower() in unit_list
 
 
