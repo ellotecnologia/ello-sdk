@@ -139,6 +139,7 @@ def ignore_line(text):
     technical_terms.append('changelog')
     technical_terms.append(r'makefile')
     technical_terms.append('projetos* de teste')
+    technical_terms.append('patch')
     
     technical_terms.append(r'\bwip\b')
     technical_terms.append(r'\bdebug\b')
