@@ -38,6 +38,8 @@ CRPaperOrientation = {
 }
 
 CRPaperSize = {
+    0: '?',
+    1: '?',
     9: 'crPaperA4'
 }
 
@@ -242,17 +244,17 @@ def main():
             sys.exit(0)
 
 
-def show_report_structure(report_name):
+def show_report_structure(report):
     """Exibe a estrutura de um relatório Crystal de forma textual"""
-    report = open_crystal_report(report_name)
+    #report = open_crystal_report(report_name)
     print('PaperOrientation:', CRPaperOrientation[report.PaperOrientation])
     print('PaperSize:', CRPaperSize[report.PaperSize])
     
     for area in report.Areas:
         if (area.Kind == crGroupHeader) or (area.Kind == crGroupFooter):
-            print(f'{CRAreaKind[area.Kind]}: {area.Name} GroupConditionField: {area.GroupConditionField.Name}')
+            print(f'Area "{area.Name}" Kind = {CRAreaKind[area.Kind]}: GroupConditionField: {area.GroupConditionField.Name}')
         else:
-            print(f'{CRAreaKind[area.Kind]}: {area.Name}')
+            print(f'Area "{area.Name}" Kind = {CRAreaKind[area.Kind]}')
         
         for section in area.Sections:
             print(f'\tSection {section.Number}: {section.Name} Height: {section.Height} Width: {section.Width} Suppress: {section.Suppress}')
@@ -263,6 +265,12 @@ def show_report_structure(report_name):
                         print(f'\t\t\t{fe.FieldDefinition.Name}')
                 elif obj.Kind == crFieldObject:
                     print(f'\t\t{CRObjectKind[obj.Kind]}: {obj.Name} FieldName: {obj.Field.Name} Top: {obj.Top} Left: {obj.Left}')
+                elif obj.Kind == crSubreportObject:
+                    print(f'===== {CRObjectKind[obj.Kind]}: {obj.Name} Top: {obj.Top} Left: {obj.Left} =====')
+                    subreport = obj.OpenSubreport()
+                    subreport.enableParameterPrompting = False
+                    show_report_structure(subreport)
+                    print('=====')
                 else:
                     print(f'\t\t{CRObjectKind[obj.Kind]}: {obj.Name} Top: {obj.Top} Left: {obj.Left}')
     print(report.sqlquerystring)
